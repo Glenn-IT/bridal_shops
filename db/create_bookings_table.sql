@@ -10,6 +10,7 @@ CREATE TABLE `bookings` (
   `email` varchar(100) NOT NULL,
   `phone_number` varchar(11) NOT NULL,
   `service_type` varchar(100) NOT NULL,
+  `package_name` varchar(100) DEFAULT NULL,
   `event_name` varchar(255) NOT NULL,
   `event_datetime` datetime NOT NULL,
   `location` text NOT NULL,

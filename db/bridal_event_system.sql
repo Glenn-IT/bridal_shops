@@ -35,6 +35,7 @@ CREATE TABLE `bookings` (
   `email` varchar(100) NOT NULL,
   `phone_number` varchar(11) NOT NULL,
   `service_type` varchar(100) NOT NULL,
+  `package_name` varchar(100) DEFAULT NULL,
   `event_name` varchar(255) NOT NULL,
   `event_datetime` datetime NOT NULL,
   `location` text NOT NULL,
@@ -162,18 +163,18 @@ CREATE TABLE `packages` (
 --
 
 INSERT INTO `packages` (`id`, `event_name`, `package_name`, `description`, `price`) VALUES
-(1, 'Birthday', 'Basic Package', 'Venue decoration, standard birthday cake, balloon setup, basic gown rental', 10000.00),
-(2, 'Birthday', 'Silver Package', 'Customized theme decoration, upgraded birthday cake, themed photo booth, designer gown rental', 20000.00),
-(3, 'Birthday', 'Gold Package', 'Full event planning, live hosting, premium catering, full costume package, photo and video coverage', 35000.00),
-(4, 'Wedding', 'Basic Package', 'Venue decoration, basic bridal gown rental, standard bouquet, basic lighting setup', 15000.00),
-(5, 'Wedding', 'Silver Package', 'Customized venue theme, designer bridal gown rental, floral arrangements, professional photographer', 25000.00),
-(6, 'Wedding', 'Gold Package', 'Full wedding planning, bridal and entourage gowns, luxury floral design, 5-course catering, full media team', 40000.00),
-(7, 'Anniversary', 'Basic Package', 'Simple venue decor, music setup, anniversary cake', 8000.00),
-(8, 'Anniversary', 'Silver Package', 'Theme-based decoration, wine setup, catering for 50 guests, couple attire', 18000.00),
-(9, 'Anniversary', 'Gold Package', 'Full event management, live music band, luxury dining, video documentary, designer dress/suit rental', 30000.00),
-(10, 'Corporate', 'Basic Package', 'Stage setup, basic sound system, banner printing, 50 chairs and tables', 12000.00),
-(11, 'Corporate', 'Silver Package', 'Themed stage design, wireless microphones, buffet catering, event coordination', 22000.00),
-(12, 'Corporate', 'Gold Package', 'Full event execution, LED wall, media coverage, conference kits, branding materials', 35000.00);
+(1, 'Birthday', 'Basic Package', 'Venue decoration / Gowns / Themes', 10000.00),
+(2, 'Birthday', 'Silver Package', 'Customized theme decoration / Gowns / Themes', 20000.00),
+(3, 'Birthday', 'Gold Package', 'Full event planning including all services', 30000.00),
+(4, 'Wedding', 'Basic Package', 'Venue decoration / Gowns / Themes', 10000.00),
+(5, 'Wedding', 'Silver Package', 'Customized theme decoration / Gowns / Themes', 20000.00),
+(6, 'Wedding', 'Gold Package', 'Full event planning including all services', 30000.00),
+(7, 'Anniversary', 'Basic Package', 'Venue decoration / Gowns / Themes', 10000.00),
+(8, 'Anniversary', 'Silver Package', 'Customized theme decoration / Gowns / Themes', 20000.00),
+(9, 'Anniversary', 'Gold Package', 'Full event planning including all services', 30000.00),
+(10, 'Corporate', 'Basic Package', 'Venue decoration / Gowns / Themes', 10000.00),
+(11, 'Corporate', 'Silver Package', 'Customized theme decoration / Gowns / Themes', 20000.00),
+(12, 'Corporate', 'Gold Package', 'Full event planning including all services', 30000.00);
 
 -- --------------------------------------------------------
 

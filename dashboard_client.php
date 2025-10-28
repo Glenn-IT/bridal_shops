@@ -223,46 +223,52 @@ $fullname = trim("$firstname $middlename $lastname");
 <div id="booknow" class="book-now-section">
   <div class="book-now-card">
     <h2>Book a Reservation</h2>
+    
+    <!-- Success/Error Messages -->
+    <?php if (isset($_SESSION['success'])): ?>
+      <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <?= htmlspecialchars($_SESSION['success']) ?>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      <?php unset($_SESSION['success']); ?>
+    <?php endif; ?>
+    
+    <?php if (isset($_SESSION['error'])): ?>
+      <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <?= htmlspecialchars($_SESSION['error']) ?>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      <?php unset($_SESSION['error']); ?>
+    <?php endif; ?>
+    
     <form action="submit_booking.php" method="POST">
-      <div class="mb-3">
-        <label for="firstname" class="form-label">First Name</label>
-        <input type="text" name="firstname" id="firstname" class="form-control" 
-               value="<?= htmlspecialchars($firstname) ?>" placeholder="ENTER YOUR FIRST NAME" readonly required>
-      </div>
-
-      <div class="mb-3">
-        <label for="middlename" class="form-label">Middle Name</label>
-        <input type="text" name="middlename" id="middlename" class="form-control" 
-               value="<?= htmlspecialchars($middlename) ?>" placeholder="ENTER YOUR MIDDLE NAME" readonly>
-      </div>
-
-      <div class="mb-3">
-        <label for="lastname" class="form-label">Last Name</label>
-        <input type="text" name="lastname" id="lastname" class="form-control" 
-               value="<?= htmlspecialchars($lastname) ?>" placeholder="ENTER YOUR LAST NAME" readonly required>
-      </div>
-
-      <div class="mb-3">
-        <label for="phone" class="form-label">Phone Number</label>
-        <input type="tel" name="phone_number" id="phone" class="form-control" 
-               value="<?= htmlspecialchars($phone_number) ?>" placeholder="ENTER YOUR PHONE NUMBER" readonly required pattern="[0-9]{11}">
-      </div>
-
-      <div class="mb-3">
-        <label for="email" class="form-label">Gmail</label>
-        <input type="email" name="email" id="email" class="form-control" 
-               value="<?= htmlspecialchars($email) ?>" placeholder="ENTER YOUR EMAIL" readonly required>
-      </div>
+      <!-- Hidden fields for user information -->
+      <input type="hidden" name="firstname" value="<?= htmlspecialchars($firstname) ?>">
+      <input type="hidden" name="middlename" value="<?= htmlspecialchars($middlename) ?>">
+      <input type="hidden" name="lastname" value="<?= htmlspecialchars($lastname) ?>">
+      <input type="hidden" name="phone_number" value="<?= htmlspecialchars($phone_number) ?>">
+      <input type="hidden" name="email" value="<?= htmlspecialchars($email) ?>">
 
       <div class="mb-3">
         <label for="service_type" class="form-label">Service Type</label>
         <select name="service_type" id="service_type" class="form-select" required>
           <option value="">-- Select Gown Type --</option>
-          <option value="Wedding Gown">Wedding Gown</option>
-          <option value="Ball Gown">Ball Gown</option>
-          <option value="Evening Gown">Evening Gown</option>
-          <option value="Debutante Gown">Debutante Gown</option>
+          <option value="Wedding" data-event="Wedding">Wedding Gown</option>
+          <option value="Birthday" data-event="Birthday">Birthday Gown</option>
+          <option value="Anniversary" data-event="Anniversary">Anniversary Gown</option>
+          <option value="Corporate" data-event="Corporate">Corporate Gown</option>
         </select>
+      </div>
+
+      <div class="mb-3" id="package_container" style="display: none;">
+        <label for="package_name" class="form-label">Select Package</label>
+        <select name="package_name" id="package_name" class="form-select">
+          <option value="">-- Select Package --</option>
+        </select>
+        <div id="package_details" class="mt-2 p-3" style="background-color: #f8f9fa; border-radius: 8px; display: none;">
+          <p class="mb-1"><strong>Description:</strong> <span id="package_description"></span></p>
+          <p class="mb-0"><strong>Price:</strong> ₱<span id="package_price"></span></p>
+        </div>
       </div>
 
       <div class="mb-3">
@@ -294,5 +300,72 @@ $fullname = trim("$firstname $middlename $lastname");
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// Service Type change event - Load packages dynamically
+document.getElementById('service_type').addEventListener('change', function() {
+  const eventType = this.value;
+  const packageContainer = document.getElementById('package_container');
+  const packageSelect = document.getElementById('package_name');
+  const packageDetails = document.getElementById('package_details');
+  
+  // Reset package selection
+  packageSelect.innerHTML = '<option value="">-- Select Package --</option>';
+  packageDetails.style.display = 'none';
+  
+  if (eventType === '') {
+    packageContainer.style.display = 'none';
+    packageSelect.removeAttribute('required');
+    return;
+  }
+  
+  // Show package container
+  packageContainer.style.display = 'block';
+  packageSelect.setAttribute('required', 'required');
+  
+  // Fetch packages from server
+  fetch(`fetch_packages.php?event=${encodeURIComponent(eventType)}`)
+    .then(response => response.json())
+    .then(packages => {
+      if (packages.length > 0) {
+        packages.forEach(pkg => {
+          const option = document.createElement('option');
+          option.value = pkg.package_name;
+          option.textContent = `${pkg.package_name} - ₱${parseFloat(pkg.price).toLocaleString()}`;
+          option.dataset.description = pkg.description;
+          option.dataset.price = pkg.price;
+          packageSelect.appendChild(option);
+        });
+      } else {
+        const option = document.createElement('option');
+        option.value = '';
+        option.textContent = 'No packages available';
+        option.disabled = true;
+        packageSelect.appendChild(option);
+      }
+    })
+    .catch(error => {
+      console.error('Error fetching packages:', error);
+      alert('Failed to load packages. Please try again.');
+    });
+});
+
+// Package selection change event - Show package details
+document.getElementById('package_name').addEventListener('change', function() {
+  const selectedOption = this.options[this.selectedIndex];
+  const packageDetails = document.getElementById('package_details');
+  const packageDescription = document.getElementById('package_description');
+  const packagePrice = document.getElementById('package_price');
+  
+  if (this.value === '') {
+    packageDetails.style.display = 'none';
+    return;
+  }
+  
+  // Display package details
+  packageDescription.textContent = selectedOption.dataset.description || 'No description available';
+  packagePrice.textContent = parseFloat(selectedOption.dataset.price).toLocaleString();
+  packageDetails.style.display = 'block';
+});
+</script>
 </body>
 </html>

@@ -7,11 +7,13 @@
 **File Modified:** `register.php`
 
 **Changes Made:**
+
 - Added validation to prevent duplicate email addresses
 - Added validation to prevent duplicate names (firstname + middlename + lastname combination)
 - Users cannot register if the exact same name combination already exists in the database
 
 **Validation Logic:**
+
 ```php
 // Checks for duplicate email
 SELECT id FROM users WHERE email = ?
@@ -21,6 +23,7 @@ SELECT id FROM users WHERE firstname = ? AND middlename = ? AND lastname = ?
 ```
 
 **Error Messages:**
+
 - "Email already registered. Please use another email."
 - "A user with this exact name already exists. Please verify your information."
 
@@ -31,6 +34,7 @@ SELECT id FROM users WHERE firstname = ? AND middlename = ? AND lastname = ?
 **File Modified:** `dashboard_client.php`
 
 **Changes Made:**
+
 - Added session check to ensure user is logged in
 - Added database query to fetch logged-in user's details
 - Auto-populated form fields with user information:
@@ -43,6 +47,7 @@ SELECT id FROM users WHERE firstname = ? AND middlename = ? AND lastname = ?
 - User's full name now displays in the navbar instead of hardcoded "Angelie"
 
 **How It Works:**
+
 ```php
 // Fetches user data on page load
 $stmt = $pdo->prepare("SELECT firstname, middlename, lastname, phone_number, email FROM users WHERE username = ?");
@@ -54,6 +59,7 @@ value="<?= htmlspecialchars($firstname) ?>" readonly
 ```
 
 **Benefits:**
+
 - Users don't need to re-enter their personal information
 - Reduces data entry errors
 - Ensures booking records match user account information
@@ -64,10 +70,12 @@ value="<?= htmlspecialchars($firstname) ?>" readonly
 ### 3. ✅ Bookings Table - Recreated
 
 **Files Created/Modified:**
+
 - `db/create_bookings_table.sql` - Standalone SQL script for bookings table
 - `db/bridal_event_system.sql` - Updated main database dump
 
 **New Bookings Table Structure:**
+
 ```sql
 CREATE TABLE `bookings` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -90,6 +98,7 @@ CREATE TABLE `bookings` (
 ```
 
 **Key Features:**
+
 - Simplified structure (removed redundant fields)
 - Added database indexes for better query performance:
   - `idx_event_datetime` - Fast lookup by booking date/time
@@ -99,6 +108,7 @@ CREATE TABLE `bookings` (
 - Automatic timestamp for record creation
 
 **Fields Included:**
+
 - ✅ firstname, middlename, lastname
 - ✅ email (now included)
 - ✅ phone_number (11 digits)
@@ -114,6 +124,7 @@ CREATE TABLE `bookings` (
 ## SQL Scripts Available
 
 ### Option 1: Standalone Bookings Table Script
+
 **File:** `db/create_bookings_table.sql`
 
 ```sql
@@ -142,6 +153,7 @@ CREATE TABLE `bookings` (
 ```
 
 **How to Use:**
+
 1. Open phpMyAdmin
 2. Select `bridal_event_system` database
 3. Go to SQL tab
@@ -149,6 +161,7 @@ CREATE TABLE `bookings` (
 5. Click "Go"
 
 ### Option 2: Full Database Dump
+
 **File:** `db/bridal_event_system.sql`
 
 This file now includes the updated bookings table structure. Import this for a fresh database setup.
@@ -160,16 +173,19 @@ This file now includes the updated bookings table structure. Import this for a f
 ### Test 1: Registration Duplicate Prevention
 
 **Test Duplicate Email:**
+
 1. Register a new user: john@gmail.com
 2. Try to register another user with the same email: john@gmail.com
 3. ❌ Should show error: "Email already registered. Please use another email."
 
 **Test Duplicate Name:**
+
 1. Register: John Paul Doe
 2. Try to register another user: John Paul Doe (same exact name)
 3. ❌ Should show error: "A user with this exact name already exists. Please verify your information."
 
 **Valid Registration:**
+
 1. Register: John Paul Doe, john@gmail.com
 2. Register: John Peter Doe, johnp@gmail.com (different middle name)
 3. ✅ Should succeed - different name combination
@@ -179,6 +195,7 @@ This file now includes the updated bookings table structure. Import this for a f
 ### Test 2: Dashboard Client Auto-Population
 
 **Steps:**
+
 1. Login as a client (e.g., username: angelie)
 2. Navigate to dashboard: `http://localhost/bridal_shops/dashboard_client.php`
 3. Scroll to "Book a Reservation" section
@@ -202,6 +219,7 @@ This file now includes the updated bookings table structure. Import this for a f
 ### Test 3: Bookings Table
 
 **Verify Table Structure:**
+
 1. Open phpMyAdmin
 2. Select `bridal_event_system` database
 3. Click on `bookings` table
@@ -209,6 +227,7 @@ This file now includes the updated bookings table structure. Import this for a f
 5. Check that indexes exist (idx_event_datetime, idx_email, idx_status)
 
 **Test Booking Creation:**
+
 1. Login as client
 2. Create a booking from dashboard
 3. Check database: `SELECT * FROM bookings;`
@@ -229,6 +248,7 @@ This file now includes the updated bookings table structure. Import this for a f
 ## Files Summary
 
 ### New Files Created:
+
 1. ✅ `register.php` - Customer registration form
 2. ✅ `db/create_bookings_table.sql` - Bookings table SQL script
 3. ✅ `db/migration_add_phone_number.sql` - Users table migration
@@ -236,6 +256,7 @@ This file now includes the updated bookings table structure. Import this for a f
 5. ✅ `test_registration.php` - Registration test page
 
 ### Modified Files:
+
 1. ✅ `login.php` - Added "Create an Account" link
 2. ✅ `dashboard_client.php` - Auto-populate user details + added Gmail field
 3. ✅ `register.php` - Added duplicate name checking
@@ -268,6 +289,7 @@ This file now includes the updated bookings table structure. Import this for a f
 ## Need Help?
 
 If you encounter any issues:
+
 1. Check browser console for JavaScript errors
 2. Check PHP error logs: `C:\xampp\apache\logs\error.log`
 3. Verify database connection in `config.php`
