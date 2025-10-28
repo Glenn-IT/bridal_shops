@@ -55,6 +55,11 @@ $result = $mysqli->query("
     }
     .sidebar a i { margin-right: 10px; }
     .content { margin-left: 250px; padding: 30px; }
+    
+    /* Hide delete button */
+    .btn-danger {
+      display: none !important;
+    }
   </style>
 </head>
 <body>

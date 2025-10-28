@@ -145,6 +145,11 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
             margin-left: 0;
         }
 
+        /* Hide delete button */
+        .btn-danger {
+            display: none !important;
+        }
+
         @media (max-width: 768px) {
             .menu-toggle {
                 display: block;

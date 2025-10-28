@@ -151,6 +151,11 @@ if (!$result) {
       width: 100%;
       background: #f8f9fa;
     }
+    
+    /* Hide delete button */
+    .btn-danger {
+      display: none !important;
+    }
   </style>
 </head>
 <body>

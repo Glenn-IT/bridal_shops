@@ -126,6 +126,11 @@ if (!$result) {
     .badge-read {
       background-color: #198754;
     }
+
+    /* Hide delete button */
+    .btn-danger {
+      display: none !important;
+    }
   </style>
 </head>
 <body>
