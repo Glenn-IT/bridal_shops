@@ -406,11 +406,12 @@ if ($isLoggedIn) {
       <div class="mb-3">
         <label for="service_type" class="form-label">Service Type</label>
         <select name="service_type" id="service_type" class="form-select" required>
-          <option value="">-- Select Gown Type --</option>
-          <option value="Wedding" data-event="Wedding">Wedding Gown</option>
-          <option value="Birthday" data-event="Birthday">Birthday Gown</option>
-          <option value="Anniversary" data-event="Anniversary">Anniversary Gown</option>
-          <option value="Corporate" data-event="Corporate">Corporate Gown</option>
+          <option value="">-- Select Type --</option>
+          <option value="Wedding" data-event="Wedding">Wedding </option>
+          <option value="Birthday" data-event="Birthday">Birthday </option>
+          <option value="Anniversary" data-event="Anniversary">Anniversary</option>
+          <option value="Corporate" data-event="Corporate">Corporate </option>
+          <option value="Catering" data-event="Catering">Catering </option>
         </select>
       </div>
 

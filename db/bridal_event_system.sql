@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 10, 2025 at 01:09 PM
+-- Generation Time: Oct 28, 2025 at 07:04 PM
 -- Server version: 10.4.32-MariaDB
--- PHP Version: 8.0.30
+-- PHP Version: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -28,7 +28,7 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `bookings` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` int(11) NOT NULL,
   `firstname` varchar(100) NOT NULL,
   `middlename` varchar(100) DEFAULT NULL,
   `lastname` varchar(100) NOT NULL,
@@ -39,13 +39,75 @@ CREATE TABLE `bookings` (
   `event_name` varchar(255) NOT NULL,
   `event_datetime` datetime NOT NULL,
   `location` text NOT NULL,
+  `payment_method` varchar(50) DEFAULT 'Cash',
+  `payment_screenshot` varchar(255) DEFAULT NULL,
   `status` varchar(50) NOT NULL DEFAULT 'Pending',
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  PRIMARY KEY (`id`),
-  KEY `idx_event_datetime` (`event_datetime`),
-  KEY `idx_email` (`email`),
-  KEY `idx_status` (`status`)
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `bookings`
+--
+
+INSERT INTO `bookings` (`id`, `firstname`, `middlename`, `lastname`, `email`, `phone_number`, `service_type`, `package_name`, `event_name`, `event_datetime`, `location`, `payment_method`, `payment_screenshot`, `status`, `created_at`) VALUES
+(6, 'Glenard', 'U', 'Pagurayan', 'glenard2308@gmail.com', '09557997409', 'Wedding', 'Basic Package', 'Sample', '2025-10-31 00:27:00', 'Sample', 'Cash', NULL, 'Declined', '2025-10-28 16:27:42'),
+(7, 'Lhei', 'B', 'Pagurayan', 'lbariuangasmen@gmail.com', '09797978978', 'Anniversary', 'Silver Package', 'qwe', '2025-10-30 00:28:00', 'qewe12eq', 'GCash', 'uploads/payment_references/payment_1761668916_6900ef34db627.png', 'Approved', '2025-10-28 16:28:36'),
+(8, 'Glenard', 'U', 'Pagurayan', 'glenard2308@gmail.com', '09557997409', 'Wedding', 'Basic Package', 'Samkwe', '2025-11-02 10:58:00', 'qweqweqw', 'GCash', 'uploads/payment_references/payment_1761674389_69010495df29e.jpg', 'Approved', '2025-10-28 17:59:49');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `chat_conversations`
+--
+
+CREATE TABLE `chat_conversations` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `admin_id` int(11) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `last_message_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `status` enum('active','closed') DEFAULT 'active'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `chat_conversations`
+--
+
+INSERT INTO `chat_conversations` (`id`, `user_id`, `admin_id`, `created_at`, `last_message_at`, `status`) VALUES
+(2, 8, NULL, '2025-10-28 16:06:09', '2025-10-28 16:08:31', 'active'),
+(3, 7, NULL, '2025-10-28 16:14:37', '2025-10-28 18:00:59', 'active');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `chat_messages`
+--
+
+CREATE TABLE `chat_messages` (
+  `id` int(11) NOT NULL,
+  `conversation_id` int(11) NOT NULL,
+  `sender_id` int(11) NOT NULL,
+  `message` text NOT NULL,
+  `is_read` tinyint(1) DEFAULT 0,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `chat_messages`
+--
+
+INSERT INTO `chat_messages` (`id`, `conversation_id`, `sender_id`, `message`, `is_read`, `created_at`) VALUES
+(3, 2, 8, 'qwe', 1, '2025-10-28 16:06:12'),
+(4, 2, 1, 'qwe', 1, '2025-10-28 16:06:24'),
+(5, 2, 1, 'qwe', 1, '2025-10-28 16:08:29'),
+(6, 2, 1, 'rrrr', 1, '2025-10-28 16:08:31'),
+(7, 3, 7, 'qwedas', 1, '2025-10-28 16:15:24'),
+(8, 3, 7, 'qwrqew', 1, '2025-10-28 16:16:29'),
+(9, 3, 1, 'qweasd', 1, '2025-10-28 16:22:22'),
+(10, 3, 7, 'adqwe', 1, '2025-10-28 16:22:31'),
+(11, 3, 1, 'qweasd', 1, '2025-10-28 16:22:35'),
+(12, 3, 7, 'qwewqeasdawd', 1, '2025-10-28 18:00:33'),
+(13, 3, 1, 'heloo', 1, '2025-10-28 18:00:59');
 
 -- --------------------------------------------------------
 
@@ -142,7 +204,10 @@ INSERT INTO `notifications` (`id`, `username`, `message`, `is_read`, `created_at
 (32, 'Angelie Lagoc Pagutalan', 'Hello Angelie Lagoc Pagutalan, your booking reservation has been approved.', 0, '2025-09-30 10:02:35'),
 (33, 'Angelie Lagoc Pagutalan', 'Hello Angelie Lagoc Pagutalan, your booking reservation has been approved.', 0, '2025-09-30 10:02:41'),
 (34, 'Angelie Lagoc Pagutalan', 'Hello Angelie Lagoc Pagutalan, your booking reservation has been approved.', 0, '2025-09-30 10:02:48'),
-(35, 'Brian A Ilac', 'Hello Brian A Ilac, your booking reservation has been approved.', 0, '2025-09-30 10:03:07');
+(35, 'Brian A Ilac', 'Hello Brian A Ilac, your booking reservation has been approved.', 0, '2025-09-30 10:03:07'),
+(36, 'Lhei B Pagurayan', 'Hello Lhei B Pagurayan, your booking reservation has been approved.', 0, '2025-10-29 00:29:12'),
+(37, 'Glenard U Pagurayan', 'Hello Glenard U Pagurayan, your booking reservation has been declined.', 0, '2025-10-29 00:29:22'),
+(38, 'Glenard U Pagurayan', 'Hello Glenard U Pagurayan, your booking reservation has been approved.', 0, '2025-10-29 02:01:55');
 
 -- --------------------------------------------------------
 
@@ -163,18 +228,18 @@ CREATE TABLE `packages` (
 --
 
 INSERT INTO `packages` (`id`, `event_name`, `package_name`, `description`, `price`) VALUES
-(1, 'Birthday', 'Basic Package', 'Venue decoration / Gowns / Themes', 10000.00),
-(2, 'Birthday', 'Silver Package', 'Customized theme decoration / Gowns / Themes', 20000.00),
-(3, 'Birthday', 'Gold Package', 'Full event planning including all services', 30000.00),
-(4, 'Wedding', 'Basic Package', 'Venue decoration / Gowns / Themes', 10000.00),
-(5, 'Wedding', 'Silver Package', 'Customized theme decoration / Gowns / Themes', 20000.00),
-(6, 'Wedding', 'Gold Package', 'Full event planning including all services', 30000.00),
-(7, 'Anniversary', 'Basic Package', 'Venue decoration / Gowns / Themes', 10000.00),
-(8, 'Anniversary', 'Silver Package', 'Customized theme decoration / Gowns / Themes', 20000.00),
-(9, 'Anniversary', 'Gold Package', 'Full event planning including all services', 30000.00),
-(10, 'Corporate', 'Basic Package', 'Venue decoration / Gowns / Themes', 10000.00),
-(11, 'Corporate', 'Silver Package', 'Customized theme decoration / Gowns / Themes', 20000.00),
-(12, 'Corporate', 'Gold Package', 'Full event planning including all services', 30000.00);
+(13, 'Birthday', 'Basic Package', 'Venue decoration / Gowns / Themes', 10000.00),
+(14, 'Birthday', 'Silver Package', 'Customized theme decoration / Gowns / Themes', 20000.00),
+(15, 'Birthday', 'Gold Package', 'Full event planning including all services', 30000.00),
+(16, 'Wedding', 'Basic Package', 'Venue decoration / Gowns / Themes', 10000.00),
+(17, 'Wedding', 'Silver Package', 'Customized theme decoration / Gowns / Themes', 20000.00),
+(18, 'Wedding', 'Gold Package', 'Full event planning including all services', 30000.00),
+(19, 'Anniversary', 'Basic Package', 'Venue decoration / Gowns / Themes', 10000.00),
+(20, 'Anniversary', 'Silver Package', 'Customized theme decoration / Gowns / Themes', 20000.00),
+(21, 'Anniversary', 'Gold Package', 'Full event planning including all services', 30000.00),
+(22, 'Corporate', 'Basic Package', 'Venue decoration / Gowns / Themes', 10000.00),
+(23, 'Corporate', 'Silver Package', 'Customized theme decoration / Gowns / Themes', 20000.00),
+(24, 'Corporate', 'Gold Package', 'Full event planning including all services', 30000.00);
 
 -- --------------------------------------------------------
 
@@ -220,14 +285,44 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `firstname`, `middlename`, `lastname`, `username`, `password`, `role`, `email`, `security_question`, `security_answer_hash`, `status`) VALUES
-(1, 'melody', 'dela', 'cruz', 'admin', '$2y$10$ixwZy1X0LIrUvA8AfatvgOVHZ5rGDi9Gl0t.J9Lw/MX5MNiWsgZiS', 'admin', 'admin@gmail.com', 'What is your favorite color?', 'a67a41c8bc79d5da917b5051f1f0d3f5aeb4b63ba246b3546a961ef7a3c7d931', 'active'),
-(2, 'angelie', 'quin', 'pangadua', 'angelie', '$2y$10$CSyB6F39LPeV2MU/rNBBMO72qpVMAUHShbEtQsjsHcI9ch9X/o1tm', 'client', 'angelie@gmail.com.com', 'What is your mother’s maiden name?', '155aaee0403c7f9ed1383f4bb9ec75b25d4f158af21acef43a029ee658ffd99b', 'active');
+INSERT INTO `users` (`id`, `firstname`, `middlename`, `lastname`, `phone_number`, `username`, `password`, `role`, `email`, `security_question`, `security_answer_hash`, `status`) VALUES
+(1, '', '', '', NULL, 'admin', '$2y$10$gvCmf1zwWBABdIk/L4hdNOHdOvCBwuTcFogGsJcQ60qyL5MEqxWIy', 'admin', 'admin@gmail.com', 'What is your favorite color?', 'a67a41c8bc79d5da917b5051f1f0d3f5aeb4b63ba246b3546a961ef7a3c7d931', 'active'),
+(2, 'angelie', 'quin', 'pangadua', NULL, 'Angeeeee', '$2y$10$CSyB6F39LPeV2MU/rNBBMO72qpVMAUHShbEtQsjsHcI9ch9X/o1tm', 'client', 'angelie@gmail.com.com', 'What is your mother’s maiden name?', '155aaee0403c7f9ed1383f4bb9ec75b25d4f158af21acef43a029ee658ffd99b', 'active'),
+(6, 'admin', '', '', NULL, 'admin1', '$2y$10$w6QwQwQwQwQwQwQwQwQwQeQwQwQwQwQwQwQwQwQwQwQwQwQwQwQwQwQwQwQwQwQw', 'admin', 'admin@gmail.com', 'What is you favorite color?', '9b1a4e9a1f2b3c3e7b8e7e8e7e8e7e8e7e8e7e8e7e8e7e8e7e8e7e8e7e8e7e8e', 'active'),
+(7, 'Glenard', 'U', 'Pagurayan', '09557997409', 'Glenn', '$2y$10$1At2/EEHCMrt00i8N3K9MOmNf9Zu2Ae3nBeHp2fApHYKP6gqJ6aAq', 'client', 'glenard2308@gmail.com', 'What is your favorite color?', '16477688c0e00699c6cfa4497a3612d7e83c532062b64b250fed8908128ed548', 'active'),
+(8, 'Lhei', 'B', 'Pagurayan', '09797978978', 'Lhei', '$2y$10$Abl1nsfUTWzBrsAKBYU43.5sbsRt89K8l0Wm.n7xQg7HxnrH.0M6K', 'client', 'lbariuangasmen@gmail.com', 'What is your favorite color?', '16477688c0e00699c6cfa4497a3612d7e83c532062b64b250fed8908128ed548', 'active');
 
 --
 -- Indexes for dumped tables
 --
 
+--
+-- Indexes for table `bookings`
+--
+ALTER TABLE `bookings`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_event_datetime` (`event_datetime`),
+  ADD KEY `idx_email` (`email`),
+  ADD KEY `idx_status` (`status`);
+
+--
+-- Indexes for table `chat_conversations`
+--
+ALTER TABLE `chat_conversations`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_user_id` (`user_id`),
+  ADD KEY `idx_admin_id` (`admin_id`),
+  ADD KEY `idx_status` (`status`);
+
+--
+-- Indexes for table `chat_messages`
+--
+ALTER TABLE `chat_messages`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_conversation_id` (`conversation_id`),
+  ADD KEY `idx_sender_id` (`sender_id`),
+  ADD KEY `idx_is_read` (`is_read`),
+  ADD KEY `idx_created_at` (`created_at`);
 
 --
 -- Indexes for table `clients`
@@ -281,7 +376,19 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `bookings`
 --
 ALTER TABLE `bookings`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+
+--
+-- AUTO_INCREMENT for table `chat_conversations`
+--
+ALTER TABLE `chat_conversations`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `chat_messages`
+--
+ALTER TABLE `chat_messages`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `clients`
@@ -305,13 +412,13 @@ ALTER TABLE `login_logs`
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
 
 --
 -- AUTO_INCREMENT for table `packages`
 --
 ALTER TABLE `packages`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT for table `reservations`
@@ -323,7 +430,25 @@ ALTER TABLE `reservations`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `chat_conversations`
+--
+ALTER TABLE `chat_conversations`
+  ADD CONSTRAINT `chat_conversations_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `chat_conversations_ibfk_2` FOREIGN KEY (`admin_id`) REFERENCES `users` (`id`) ON DELETE SET NULL;
+
+--
+-- Constraints for table `chat_messages`
+--
+ALTER TABLE `chat_messages`
+  ADD CONSTRAINT `chat_messages_ibfk_1` FOREIGN KEY (`conversation_id`) REFERENCES `chat_conversations` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `chat_messages_ibfk_2` FOREIGN KEY (`sender_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
