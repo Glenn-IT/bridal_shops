@@ -405,6 +405,7 @@ $fullname = trim("$firstname $middlename $lastname");
       <div class="mb-3">
         <label for="event_datetime" class="form-label">Event Date & Time</label>
         <input type="datetime-local" name="event_datetime" id="event_datetime" class="form-control" required>
+        <div id="date_availability_message" class="mt-2" style="display: none;"></div>
       </div>
 
       <div class="mb-3">
@@ -444,6 +445,83 @@ $fullname = trim("$firstname $middlename $lastname");
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+// Set minimum datetime to current date and time (prevent past dates)
+function setMinDateTime() {
+  const now = new Date();
+  // Format: YYYY-MM-DDTHH:MM
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  const hours = String(now.getHours()).padStart(2, '0');
+  const minutes = String(now.getMinutes()).padStart(2, '0');
+  
+  const minDateTime = `${year}-${month}-${day}T${hours}:${minutes}`;
+  document.getElementById('event_datetime').setAttribute('min', minDateTime);
+}
+
+// Call on page load
+setMinDateTime();
+
+// Function to check date availability
+function checkDateAvailability(datetime) {
+  const messageDiv = document.getElementById('date_availability_message');
+  const submitButton = document.querySelector('button[name="submit_booking"]');
+  
+  if (!datetime) {
+    messageDiv.style.display = 'none';
+    submitButton.disabled = false;
+    return;
+  }
+  
+  // Show loading message
+  messageDiv.style.display = 'block';
+  messageDiv.className = 'mt-2 alert alert-info';
+  messageDiv.textContent = 'Checking availability...';
+  
+  // Make AJAX request to check availability
+  fetch(`check_date_availability.php?event_datetime=${encodeURIComponent(datetime)}`)
+    .then(response => response.json())
+    .then(data => {
+      if (data.available) {
+        messageDiv.className = 'mt-2 alert alert-success';
+        messageDiv.innerHTML = '<i class="fas fa-check-circle"></i> ' + data.message;
+        submitButton.disabled = false;
+      } else {
+        messageDiv.className = 'mt-2 alert alert-danger';
+        messageDiv.innerHTML = '<i class="fas fa-exclamation-circle"></i> ' + data.message;
+        submitButton.disabled = true;
+      }
+      messageDiv.style.display = 'block';
+    })
+    .catch(error => {
+      console.error('Error checking date availability:', error);
+      messageDiv.className = 'mt-2 alert alert-warning';
+      messageDiv.textContent = 'Unable to check availability. Please try again.';
+      messageDiv.style.display = 'block';
+      submitButton.disabled = false;
+    });
+}
+
+// Event listener for datetime input change
+document.getElementById('event_datetime').addEventListener('change', function() {
+  const selectedDateTime = this.value;
+  const now = new Date();
+  const selected = new Date(selectedDateTime);
+  
+  // Double-check if selected date is in the past
+  if (selected < now) {
+    const messageDiv = document.getElementById('date_availability_message');
+    messageDiv.style.display = 'block';
+    messageDiv.className = 'mt-2 alert alert-danger';
+    messageDiv.innerHTML = '<i class="fas fa-exclamation-circle"></i> You cannot select a past date. Please choose a future date.';
+    document.querySelector('button[name="submit_booking"]').disabled = true;
+    return;
+  }
+  
+  // Check availability for the selected date
+  checkDateAvailability(selectedDateTime);
+});
+
 // Function to select service from the services section
 function selectService(serviceType) {
   // Wait for the page to scroll to the booking section

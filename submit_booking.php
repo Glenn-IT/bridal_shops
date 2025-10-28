@@ -24,6 +24,16 @@ $location       = $mysqli->real_escape_string($_POST['location']);
 $payment_method = $mysqli->real_escape_string($_POST['payment_method'] ?? 'Cash');
 $status         = "Pending";
 
+// Validate that the event date is not in the past
+$event_date_obj = new DateTime($event_datetime);
+$current_date = new DateTime();
+
+if ($event_date_obj < $current_date) {
+    $_SESSION['error'] = "You cannot book an event in the past. Please select a future date.";
+    header("Location: dashboard_client.php#booknow");
+    exit();
+}
+
 // Handle file upload for GCash payment
 $payment_screenshot = null;
 if ($payment_method === 'GCash' && isset($_FILES['payment_screenshot']) && $_FILES['payment_screenshot']['error'] === UPLOAD_ERR_OK) {
@@ -46,14 +56,14 @@ if ($payment_method === 'GCash' && isset($_FILES['payment_screenshot']) && $_FIL
 }
 
 
-$check = $mysqli->prepare("SELECT id FROM bookings WHERE event_datetime = ?");
+$check = $mysqli->prepare("SELECT id FROM bookings WHERE DATE(event_datetime) = DATE(?)");
 $check->bind_param("s", $event_datetime);
 $check->execute();
 $check->store_result();
 
 if ($check->num_rows > 0) {
-    // ❌ Duplicate datetime found
-    $_SESSION['error'] = "This date and time is already booked. Please choose a different slot.";
+    // ❌ Duplicate date found (same day booking already exists)
+    $_SESSION['error'] = "This date is already booked. Please choose a different date.";
     header("Location: dashboard_client.php#booknow");
     exit();
 }
