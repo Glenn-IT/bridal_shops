@@ -15,7 +15,14 @@ if (isset($_SESSION["username"]) && isset($_SESSION["role"])) {
 
 
 $error = "";
+$success = "";
 $lockoutTime = 20; // Lockout duration in seconds
+
+// Check for password reset success message
+if (isset($_SESSION['password_reset_success'])) {
+    $success = "Password reset successfully! You can now login with your new password.";
+    unset($_SESSION['password_reset_success']);
+}
 
 if (!isset($_SESSION['login_attempts'])) {
     $_SESSION['login_attempts'] = 0;
@@ -153,6 +160,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $remainingTime == 0) {
             font-weight: bold;
         }
 
+        .success-msg {
+            color: #28a745;
+            text-align: center;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
         .countdown {
             text-align: center;
             margin-top: 10px;
@@ -181,6 +195,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $remainingTime == 0) {
 
         <a href="forgot_password.php">Forgot Password?</a>
         <a href="register.php">Create an Account</a>
+
+        <?php if (!empty($success)): ?>
+            <div class="success-msg"><?= htmlspecialchars($success) ?></div>
+        <?php endif; ?>
 
         <?php if (!empty($error)): ?>
             <div class="error-msg"><?= htmlspecialchars($error) ?></div>

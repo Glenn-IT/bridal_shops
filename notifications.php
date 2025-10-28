@@ -1,13 +1,24 @@
 <?php
 session_start();
+include 'config.php';
+
+// Check if user is logged in
+if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'client') {
+    header('Location: login.php');
+    exit();
+}
+
+// Fetch user details for display
+$username = $_SESSION['username'];
+$stmt = $pdo->prepare("SELECT firstname, middlename, lastname FROM users WHERE username = ?");
+$stmt->execute([$username]);
+$user = $stmt->fetch(PDO::FETCH_ASSOC);
+$fullname = $user ? trim($user['firstname'] . ' ' . $user['middlename'] . ' ' . $user['lastname']) : $username;
 
 $mysqli = new mysqli("localhost", "root", "", "bridal_event_system");
 if ($mysqli->connect_errno) {
     die("Connection failed: " . $mysqli->connect_error);
 }
-
-// Use session username if logged in, otherwise 'Guest'
-$username = $_SESSION['username'] ?? 'Angelie';
 
 // ✅ Delete individual notification (only for this user)
 if (isset($_GET['delete_id'])) {
@@ -33,6 +44,33 @@ $result = $mysqli->query("SELECT * FROM notifications WHERE username='$username'
     body {
       background-color: #f4f4f4;
       font-family: Arial, sans-serif;
+      padding-top: 70px;
+    }
+    /* Navbar Styles */
+    .navbar-custom {
+      background: linear-gradient(135deg, #d6336c, #e76f51);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .navbar-brand {
+      font-weight: bold;
+      font-size: 1.5rem;
+      color: white !important;
+    }
+    .nav-link {
+      color: white !important;
+      margin: 0 10px;
+    }
+    .nav-link:hover {
+      color: #ffd700 !important;
+    }
+    .btn-contact {
+      background-color: #fff;
+      color: #d6336c;
+      border: none;
+    }
+    .btn-contact:hover {
+      background-color: #ffd700;
+      color: #d6336c;
     }
     .container {
       max-width: 800px;
@@ -60,6 +98,33 @@ $result = $mysqli->query("SELECT * FROM notifications WHERE username='$username'
   </style>
 </head>
 <body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light navbar-custom fixed-top">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="dashboard_client.php">Mae's Bridal Shop</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" style="background-color: white;">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item"><a class="nav-link" href="dashboard_client.php#hero">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="services.php">Services</a></li>
+        <li class="nav-item"><a class="nav-link" href="dashboard_client.php#booknow">Book Now</a></li>
+        <li class="nav-item"><a class="nav-link active" href="notifications.php">Notifications</a></li>
+        <li class="nav-item"><a class="nav-link" href="booking_history.php">Booking History</a></li>
+        <li class="nav-item"><a class="nav-link" href="contact.php">Contact</a></li>
+        <li class="nav-item"><a class="nav-link" href="about.php">About</a></li>
+      </ul>
+      <div class="d-flex align-items-center gap-2">
+        <span class="text-white"><?= htmlspecialchars($fullname) ?></span>
+        <a href="logout.php" class="btn btn-sm btn-outline-light">Logout</a>
+        <a href="contact.php" class="btn btn-sm btn-contact">Contact Us</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
 <div class="container bg-white p-4 rounded shadow-sm">
   <h3 class="mb-4 text-primary">Your Notifications</h3>
 
@@ -91,5 +156,9 @@ $result = $mysqli->query("SELECT * FROM notifications WHERE username='$username'
     <div class="alert alert-info">No notifications yet.</div>
   <?php endif; ?>
 </div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 </html>

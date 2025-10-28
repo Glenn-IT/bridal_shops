@@ -61,9 +61,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $updateStmt = $pdo->prepare("UPDATE users SET password = ? WHERE username = ?");
                     $updateStmt->execute([$hashedPassword, $username]);
 
-                    $success = "Password updated successfully. You can now <a href='login.php'>login</a>.";
-                    $error = "";
-                    $showResetForm = false;
+                    // Redirect to login page after successful password reset
+                    $_SESSION['password_reset_success'] = true;
+                    header('Location: login.php');
+                    exit();
                 }
             }
         }

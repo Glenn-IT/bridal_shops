@@ -197,6 +197,7 @@ $fullname = trim("$firstname $middlename $lastname");
         <li class="nav-item"><a class="nav-link" href="services.php">Services</a></li>
         <li class="nav-item"><a class="nav-link" href="#booknow">Book Now</a></li>
         <li class="nav-item"><a class="nav-link" href="notifications.php">Notifications</a></li>
+        <li class="nav-item"><a class="nav-link" href="booking_history.php">Booking History</a></li>
         <li class="nav-item"><a class="nav-link" href="contact.php">Contact</a></li>
         <li class="nav-item"><a class="nav-link" href="about.php">About</a></li>
       </ul>
