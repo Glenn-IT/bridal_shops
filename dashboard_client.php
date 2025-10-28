@@ -241,7 +241,7 @@ $fullname = trim("$firstname $middlename $lastname");
       <?php unset($_SESSION['error']); ?>
     <?php endif; ?>
     
-    <form action="submit_booking.php" method="POST">
+    <form action="submit_booking.php" method="POST" enctype="multipart/form-data">
       <!-- Hidden fields for user information -->
       <input type="hidden" name="firstname" value="<?= htmlspecialchars($firstname) ?>">
       <input type="hidden" name="middlename" value="<?= htmlspecialchars($middlename) ?>">
@@ -284,6 +284,23 @@ $fullname = trim("$firstname $middlename $lastname");
       <div class="mb-3">
         <label for="location" class="form-label">Event Location</label>
         <textarea name="location" id="location" class="form-control" rows="3" required></textarea>
+      </div>
+
+      <div class="mb-3">
+        <label for="payment_method" class="form-label">Payment Method After Event</label>
+        <select name="payment_method" id="payment_method" class="form-select" required>
+          <option value="">-- Select Payment Method --</option>
+          <option value="Cash">Cash</option>
+          <option value="GCash">GCash</option>
+        </select>
+      </div>
+
+      <div class="mb-3" id="gcash_details" style="display: none;">
+        <div class="text-center mb-3">
+          <img src="images/gcash_qr.png" alt="GCash QR Code" style="max-width: 300px; width: 100%; border: 2px solid #007bff; border-radius: 10px; padding: 10px; background: white;">
+        </div>
+        <label for="payment_screenshot" class="form-label">Upload Screenshot of Reference</label>
+        <input type="file" name="payment_screenshot" id="payment_screenshot" class="form-control" accept="image/*">
       </div>
 
       <div class="btn-group-action">
@@ -365,6 +382,21 @@ document.getElementById('package_name').addEventListener('change', function() {
   packageDescription.textContent = selectedOption.dataset.description || 'No description available';
   packagePrice.textContent = parseFloat(selectedOption.dataset.price).toLocaleString();
   packageDetails.style.display = 'block';
+});
+
+// Payment method change event - Show/hide GCash details
+document.getElementById('payment_method').addEventListener('change', function() {
+  const gcashDetails = document.getElementById('gcash_details');
+  const paymentScreenshot = document.getElementById('payment_screenshot');
+  
+  if (this.value === 'GCash') {
+    gcashDetails.style.display = 'block';
+    paymentScreenshot.setAttribute('required', 'required');
+  } else {
+    gcashDetails.style.display = 'none';
+    paymentScreenshot.removeAttribute('required');
+    paymentScreenshot.value = '';
+  }
 });
 </script>
 </body>

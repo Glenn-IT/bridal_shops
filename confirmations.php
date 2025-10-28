@@ -93,7 +93,7 @@ if (isset($_GET['action']) && isset($_GET['id'])) {
 }
 
 // Fetch all bookings
-$query = "SELECT id, firstname, middlename, lastname, email, phone_number, event_name, service_type, event_datetime, status 
+$query = "SELECT id, firstname, middlename, lastname, email, phone_number, event_name, service_type, event_datetime, status, payment_method, payment_screenshot 
           FROM bookings ORDER BY created_at DESC";
 $result = $mysqli->query($query);
 if (!$result) {
@@ -182,6 +182,7 @@ if (!$result) {
           <th>Phone Number</th>
           <th>Event</th>
           <th>Date/Time</th>
+          <th>Payment Method</th>
           <th>Status</th>
           <th>Actions</th>
         </tr>
@@ -201,6 +202,37 @@ if (!$result) {
               <small class="text-muted"><?= htmlspecialchars($row['service_type']) ?></small>
             </td>
             <td><?= date("M d, Y h:i A", strtotime($row['event_datetime'])) ?></td>
+            <td>
+              <?php 
+                $paymentMethod = $row['payment_method'] ?? 'Cash';
+                if ($paymentMethod === 'GCash' && !empty($row['payment_screenshot'])): 
+              ?>
+                <span class="badge bg-info">GCash</span><br>
+                <button class="btn btn-sm btn-primary mt-1" data-bs-toggle="modal" data-bs-target="#referenceModal<?= $row['id'] ?>">
+                  <i class="fas fa-eye"></i> View Reference
+                </button>
+                
+                <!-- Modal for viewing reference screenshot -->
+                <div class="modal fade" id="referenceModal<?= $row['id'] ?>" tabindex="-1" aria-hidden="true">
+                  <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title">GCash Payment Reference</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body text-center">
+                        <img src="<?= htmlspecialchars($row['payment_screenshot']) ?>" alt="Payment Reference" class="img-fluid" style="max-height: 500px;">
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              <?php else: ?>
+                <span class="badge bg-secondary"><?= htmlspecialchars($paymentMethod) ?></span>
+              <?php endif; ?>
+            </td>
             <td>
               <span class="badge <?= 
                 $row['status'] === 'Approved' ? 'bg-success' : 
@@ -222,5 +254,6 @@ if (!$result) {
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

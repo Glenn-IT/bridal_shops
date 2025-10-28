@@ -5,15 +5,21 @@
 All event types (Birthday, Wedding, Anniversary, Corporate) now have the same three packages with uniform pricing:
 
 ### BASIC PACKAGE - ₱10,000
+
 **Description:** Venue decoration / Gowns / Themes
+
 - Available for: Birthday, Wedding, Anniversary, Corporate
 
 ### SILVER PACKAGE - ₱20,000
+
 **Description:** Customized theme decoration / Gowns / Themes
+
 - Available for: Birthday, Wedding, Anniversary, Corporate
 
 ### GOLD PACKAGE - ₱30,000
+
 **Description:** Full event planning including all services
+
 - Available for: Birthday, Wedding, Anniversary, Corporate
 
 ---
@@ -21,21 +27,25 @@ All event types (Birthday, Wedding, Anniversary, Corporate) now have the same th
 ## 📊 Complete Package List
 
 ### BIRTHDAY PACKAGES
+
 1. ✅ Basic Package - ₱10,000 - Venue decoration / Gowns / Themes
 2. ✅ Silver Package - ₱20,000 - Customized theme decoration / Gowns / Themes
 3. ✅ Gold Package - ₱30,000 - Full event planning including all services
 
 ### WEDDING PACKAGES
+
 1. ✅ Basic Package - ₱10,000 - Venue decoration / Gowns / Themes
 2. ✅ Silver Package - ₱20,000 - Customized theme decoration / Gowns / Themes
 3. ✅ Gold Package - ₱30,000 - Full event planning including all services
 
 ### ANNIVERSARY PACKAGES
+
 1. ✅ Basic Package - ₱10,000 - Venue decoration / Gowns / Themes
 2. ✅ Silver Package - ₱20,000 - Customized theme decoration / Gowns / Themes
 3. ✅ Gold Package - ₱30,000 - Full event planning including all services
 
 ### CORPORATE PACKAGES
+
 1. ✅ Basic Package - ₱10,000 - Venue decoration / Gowns / Themes
 2. ✅ Silver Package - ₱20,000 - Customized theme decoration / Gowns / Themes
 3. ✅ Gold Package - ₱30,000 - Full event planning including all services
@@ -45,11 +55,13 @@ All event types (Birthday, Wedding, Anniversary, Corporate) now have the same th
 ## 🔄 Changes Made
 
 ### Database Updates:
+
 1. ✅ Cleared all old packages with varying prices
 2. ✅ Inserted 12 new packages (4 event types × 3 packages each)
 3. ✅ All packages now have uniform descriptions and pricing
 
 ### File Updates:
+
 1. ✅ `db/bridal_event_system.sql` - Updated with new package data
 
 ---
@@ -57,6 +69,7 @@ All event types (Birthday, Wedding, Anniversary, Corporate) now have the same th
 ## 🧪 Testing the Updated Packages
 
 ### Test Steps:
+
 1. Go to: http://localhost/bridal_shops/dashboard_client.php#booknow
 2. Select **"Wedding Gown"** from Service Type
 3. ✅ Should show:
@@ -114,16 +127,19 @@ INSERT INTO packages (event_name, package_name, description, price) VALUES
 ## 🎯 What's Included in Each Package
 
 ### Basic Package (₱10,000)
+
 - Venue decoration
 - Gowns selection
 - Themed setup
 
 ### Silver Package (₱20,000)
+
 - Customized theme decoration
 - Premium gowns selection
 - Enhanced themed setup
 
 ### Gold Package (₱30,000)
+
 - Full event planning
 - Complete event management
 - All services included
@@ -134,13 +150,15 @@ INSERT INTO packages (event_name, package_name, description, price) VALUES
 ## 📞 Quick Verification
 
 To verify packages in database:
+
 ```sql
-SELECT event_name, package_name, description, price 
-FROM packages 
+SELECT event_name, package_name, description, price
+FROM packages
 ORDER BY event_name, price;
 ```
 
 Expected Result: 12 rows (4 event types × 3 packages)
+
 - All Basic packages: ₱10,000
 - All Silver packages: ₱20,000
 - All Gold packages: ₱30,000

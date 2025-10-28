@@ -5,12 +5,14 @@
 ### Implementation Details:
 
 **Service Type Options Updated:**
+
 - Wedding Gown → Wedding Packages
-- Birthday Gown → Birthday Packages  
+- Birthday Gown → Birthday Packages
 - Anniversary Gown → Anniversary Packages
 - Corporate Gown → Corporate Packages
 
 **How It Works:**
+
 1. User selects a Service Type from dropdown
 2. JavaScript automatically fetches available packages from database
 3. Package dropdown appears with all packages for that service type
@@ -18,16 +20,19 @@
 5. Package details (description and price) are displayed below
 
 **Technical Implementation:**
+
 - Added dynamic AJAX call to `fetch_packages.php`
 - Packages are loaded in real-time based on service type selection
 - Package dropdown shows: Package Name + Price
 - Package details box shows: Description + Price
 
 **Database Changes:**
+
 - Added `package_name` column to `bookings` table
 - Type: `varchar(100) DEFAULT NULL`
 
 **Files Modified:**
+
 1. `dashboard_client.php` - Added package selection UI and JavaScript
 2. `submit_booking.php` - Updated to save package_name
 3. `db/bookings` table - Added package_name column
@@ -39,13 +44,15 @@
 ### Implementation Details:
 
 **Fields Now Hidden (Using Hidden Inputs):**
+
 - ✅ First Name
-- ✅ Middle Name  
+- ✅ Middle Name
 - ✅ Last Name
 - ✅ Phone Number
 - ✅ Gmail
 
 **Visible Fields in Booking Form:**
+
 - ✅ Service Type (with dynamic options)
 - ✅ Select Package (appears after selecting service type)
 - ✅ Event Name
@@ -53,6 +60,7 @@
 - ✅ Event Location
 
 **How It Works:**
+
 - Personal information is auto-populated from logged-in user's account
 - Fields are converted to hidden HTML inputs
 - Data is still submitted with the form
@@ -60,6 +68,7 @@
 - Cleaner, simpler booking experience
 
 **Benefits:**
+
 - Faster booking process
 - Prevents data entry errors
 - Ensures booking matches user account
@@ -99,8 +108,8 @@ CREATE TABLE `bookings` (
 
 ```sql
 -- Add package_name column to existing bookings table
-ALTER TABLE bookings 
-ADD COLUMN package_name varchar(100) DEFAULT NULL 
+ALTER TABLE bookings
+ADD COLUMN package_name varchar(100) DEFAULT NULL
 AFTER service_type;
 ```
 
@@ -108,14 +117,15 @@ AFTER service_type;
 
 ## 📊 Service Type to Package Mapping
 
-| Service Type | Event Type | Available Packages |
-|-------------|------------|-------------------|
-| Wedding Gown | Wedding | Basic, Silver, Gold |
-| Birthday Gown | Birthday | Basic, Silver, Gold |
+| Service Type     | Event Type  | Available Packages  |
+| ---------------- | ----------- | ------------------- |
+| Wedding Gown     | Wedding     | Basic, Silver, Gold |
+| Birthday Gown    | Birthday    | Basic, Silver, Gold |
 | Anniversary Gown | Anniversary | Basic, Silver, Gold |
-| Corporate Gown | Corporate | Basic, Silver, Gold |
+| Corporate Gown   | Corporate   | Basic, Silver, Gold |
 
 **Package Price Ranges:**
+
 - Basic Package: ₱8,000 - ₱15,000
 - Silver Package: ₱18,000 - ₱25,000
 - Gold Package: ₱30,000 - ₱40,000
@@ -125,12 +135,14 @@ AFTER service_type;
 ## 🎨 User Experience Flow
 
 ### Before Changes:
+
 1. User sees all personal fields (firstname, lastname, etc.)
 2. User manually fills in all information
 3. No package selection
 4. Risk of entering wrong information
 
 ### After Changes:
+
 1. User logs in → Personal info auto-loaded
 2. User only sees: Service Type, Event Name, Date, Location
 3. **Select Service Type** → Package dropdown appears automatically
@@ -143,21 +155,25 @@ AFTER service_type;
 ## ✨ New Features Added
 
 ### 1. Dynamic Package Loading
+
 - Real-time AJAX fetch from database
 - No page reload required
 - Packages filtered by service type
 
 ### 2. Package Details Display
+
 - Shows package description
 - Shows formatted price (₱10,000)
 - Styled info box with gray background
 
 ### 3. Form Validation
+
 - Package selection required when service type is selected
 - Cannot submit without selecting package
 - Browser-level validation
 
 ### 4. Success/Error Messages
+
 - Bootstrap alert messages
 - Auto-dismissible
 - Shows booking confirmation
@@ -168,6 +184,7 @@ AFTER service_type;
 ## 🧪 Testing Instructions
 
 ### Test Scenario 1: Package Selection
+
 1. Login as client: http://localhost/bridal_shops/login.php
 2. Go to dashboard: http://localhost/bridal_shops/dashboard_client.php
 3. Scroll to "Book a Reservation"
@@ -178,6 +195,7 @@ AFTER service_type;
 8. ✅ Package details box should appear showing description and price
 
 ### Test Scenario 2: Different Service Types
+
 1. Select "Birthday Gown"
 2. ✅ Package dropdown should update with Birthday packages
 3. Select "Anniversary Gown"
@@ -186,6 +204,7 @@ AFTER service_type;
 6. ✅ Package dropdown should update with Corporate packages
 
 ### Test Scenario 3: Complete Booking
+
 1. Select Service Type: "Wedding Gown"
 2. Select Package: "Silver Package"
 3. Event Name: "John & Mary Wedding"
@@ -197,6 +216,7 @@ AFTER service_type;
 9. ✅ Verify package_name is saved
 
 ### Test Scenario 4: Hidden Fields
+
 1. Login and go to booking form
 2. ✅ Should NOT see firstname, middlename, lastname fields
 3. ✅ Should NOT see phone number field
@@ -210,15 +230,18 @@ AFTER service_type;
 ## 📁 Files Modified
 
 ### PHP Files:
+
 1. ✅ `dashboard_client.php` - Main booking form with package selection
 2. ✅ `submit_booking.php` - Process bookings with package
 3. ✅ `fetch_packages.php` - API endpoint (no changes, already working)
 
 ### Database Files:
+
 1. ✅ `db/bridal_event_system.sql` - Updated bookings table
 2. ✅ `db/create_bookings_table.sql` - Updated standalone script
 
 ### Documentation:
+
 1. ✅ `DASHBOARD_UPDATES.md` - This file
 
 ---
@@ -226,25 +249,43 @@ AFTER service_type;
 ## 🔍 Code Snippets
 
 ### JavaScript for Package Loading:
+
 ```javascript
-document.getElementById('service_type').addEventListener('change', function() {
+document.getElementById("service_type").addEventListener("change", function () {
   const eventType = this.value;
-  
+
   fetch(`fetch_packages.php?event=${encodeURIComponent(eventType)}`)
-    .then(response => response.json())
-    .then(packages => {
+    .then((response) => response.json())
+    .then((packages) => {
       // Populate package dropdown
     });
 });
 ```
 
 ### Hidden Input Fields:
+
 ```html
-<input type="hidden" name="firstname" value="<?= htmlspecialchars($firstname) ?>">
-<input type="hidden" name="middlename" value="<?= htmlspecialchars($middlename) ?>">
-<input type="hidden" name="lastname" value="<?= htmlspecialchars($lastname) ?>">
-<input type="hidden" name="phone_number" value="<?= htmlspecialchars($phone_number) ?>">
-<input type="hidden" name="email" value="<?= htmlspecialchars($email) ?>">
+<input
+  type="hidden"
+  name="firstname"
+  value="<?= htmlspecialchars($firstname) ?>"
+/>
+<input
+  type="hidden"
+  name="middlename"
+  value="<?= htmlspecialchars($middlename) ?>"
+/>
+<input
+  type="hidden"
+  name="lastname"
+  value="<?= htmlspecialchars($lastname) ?>"
+/>
+<input
+  type="hidden"
+  name="phone_number"
+  value="<?= htmlspecialchars($phone_number) ?>"
+/>
+<input type="hidden" name="email" value="<?= htmlspecialchars($email) ?>" />
 ```
 
 ---
@@ -275,6 +316,7 @@ document.getElementById('service_type').addEventListener('change', function() {
 ## 📞 Support
 
 If you encounter any issues:
+
 1. Clear browser cache
 2. Check browser console for JavaScript errors
 3. Verify `fetch_packages.php` is working: http://localhost/bridal_shops/fetch_packages.php?event=Wedding

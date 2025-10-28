@@ -21,7 +21,29 @@ $package_name   = $mysqli->real_escape_string($_POST['package_name'] ?? '');
 $event_name     = $mysqli->real_escape_string($_POST['event_name']);
 $event_datetime = $mysqli->real_escape_string($_POST['event_datetime']);
 $location       = $mysqli->real_escape_string($_POST['location']);
+$payment_method = $mysqli->real_escape_string($_POST['payment_method'] ?? 'Cash');
 $status         = "Pending";
+
+// Handle file upload for GCash payment
+$payment_screenshot = null;
+if ($payment_method === 'GCash' && isset($_FILES['payment_screenshot']) && $_FILES['payment_screenshot']['error'] === UPLOAD_ERR_OK) {
+    $upload_dir = 'uploads/payment_references/';
+    if (!is_dir($upload_dir)) {
+        mkdir($upload_dir, 0777, true);
+    }
+    
+    $file_extension = strtolower(pathinfo($_FILES['payment_screenshot']['name'], PATHINFO_EXTENSION));
+    $allowed_extensions = ['jpg', 'jpeg', 'png', 'gif'];
+    
+    if (in_array($file_extension, $allowed_extensions)) {
+        $new_filename = 'payment_' . time() . '_' . uniqid() . '.' . $file_extension;
+        $upload_path = $upload_dir . $new_filename;
+        
+        if (move_uploaded_file($_FILES['payment_screenshot']['tmp_name'], $upload_path)) {
+            $payment_screenshot = $upload_path;
+        }
+    }
+}
 
 
 $check = $mysqli->prepare("SELECT id FROM bookings WHERE event_datetime = ?");
@@ -38,12 +60,12 @@ if ($check->num_rows > 0) {
 $check->close();
 
 $stmt = $mysqli->prepare("INSERT INTO bookings 
-    (firstname, middlename, lastname, email, phone_number, service_type, package_name, event_name, event_datetime, location, status) 
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-$stmt->bind_param("sssssssssss", 
+    (firstname, middlename, lastname, email, phone_number, service_type, package_name, event_name, event_datetime, location, payment_method, payment_screenshot, status) 
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+$stmt->bind_param("sssssssssssss", 
     $firstname, $middlename, $lastname, 
     $email, $phone_number, $service_type, $package_name,
-    $event_name, $event_datetime, $location, $status
+    $event_name, $event_datetime, $location, $payment_method, $payment_screenshot, $status
 );
 
 if ($stmt->execute()) {
