@@ -8,6 +8,17 @@ $fullname = '';
 
 if ($isLoggedIn) {
     include 'config.php';
+    
+    // Get user_id if not set in session
+    if (!isset($_SESSION['user_id'])) {
+        $stmt = $pdo->prepare("SELECT id FROM users WHERE username = ?");
+        $stmt->execute([$_SESSION['username']]);
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($user) {
+            $_SESSION['user_id'] = $user['id'];
+        }
+    }
+    
     $stmt = $pdo->prepare("SELECT firstname, middlename, lastname FROM users WHERE username = ?");
     $stmt->execute([$_SESSION['username']]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -214,6 +225,161 @@ if ($isLoggedIn) {
                 padding: 15px;
             }
         }
+
+        /* Chat Styles */
+        .chat-container-client {
+            display: flex;
+            flex-direction: column;
+            height: 600px;
+        }
+
+        .chat-container-client h2 {
+            margin-bottom: 20px;
+            color: #d6336c;
+            font-size: 1.5rem;
+        }
+
+        .chat-box {
+            flex: 1;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 20px;
+            overflow-y: auto;
+            background: #f9f9f9;
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .empty-chat-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: #999;
+            text-align: center;
+        }
+
+        .empty-chat-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #d6336c;
+        }
+
+        .chat-message {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            max-width: 75%;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .chat-message.sent {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+
+        .chat-message.received {
+            align-self: flex-start;
+        }
+
+        .chat-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #d6336c, #e76f51);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.85rem;
+            flex-shrink: 0;
+        }
+
+        .chat-bubble {
+            background: white;
+            padding: 12px 16px;
+            border-radius: 18px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            word-wrap: break-word;
+        }
+
+        .chat-message.sent .chat-bubble {
+            background: linear-gradient(135deg, #d6336c, #e76f51);
+            color: white;
+        }
+
+        .chat-time {
+            font-size: 0.7rem;
+            color: #999;
+            margin-top: 5px;
+        }
+
+        .chat-input-container {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .chat-input-field {
+            flex: 1;
+            padding: 12px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .chat-input-field:focus {
+            outline: none;
+            border-color: #d6336c;
+        }
+
+        .chat-send-btn {
+            background: linear-gradient(135deg, #d6336c, #e76f51);
+            color: #fff;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+            white-space: nowrap;
+        }
+
+        .chat-send-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .login-prompt {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .login-prompt h3 {
+            color: #333;
+            margin: 20px 0 10px;
+        }
+
+        .login-prompt p {
+            color: #666;
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
@@ -287,42 +453,41 @@ if ($isLoggedIn) {
         </div>
     </div>
 
+    <?php if ($isLoggedIn && $role === 'client'): ?>
+    <!-- Live Chat for Logged-in Clients -->
     <div class="contact-card">
-        <div class="contact-form">
-            <h2><i class="fas fa-paper-plane"></i> Send Us a Message</h2>
-
-            <form action="contact.php" method="POST">
-                <div class="form-group">
-                    <label for="name"><i class="fas fa-user"></i> Full Name:</label>
-                    <input type="text" id="name" name="name" required placeholder="Enter your full name">
+        <div class="chat-container-client">
+            <h2><i class="fas fa-comments"></i> Live Chat with Admin</h2>
+            <div class="chat-box" id="chatBox">
+                <div class="empty-chat-state">
+                    <i class="fas fa-comments"></i>
+                    <p>Start a conversation with our admin team</p>
                 </div>
-
-                <div class="form-group">
-                    <label for="email"><i class="fas fa-envelope"></i> Email Address:</label>
-                    <input type="email" id="email" name="email" required placeholder="Enter your email">
-                </div>
-
-                <div class="form-group">
-                    <label for="message"><i class="fas fa-comment"></i> Your Message:</label>
-                    <textarea id="message" name="message" required placeholder="Write your message here..."></textarea>
-                </div>
-
-                <button type="submit" class="submit-btn">
-                    <i class="fas fa-paper-plane"></i> Send Message
+            </div>
+            <div class="chat-input-container">
+                <input type="text" id="chatInput" class="chat-input-field" placeholder="Type your message here..." onkeypress="handleChatKeyPress(event)">
+                <button onclick="sendChatMessage()" class="chat-send-btn">
+                    <i class="fas fa-paper-plane"></i> Send
                 </button>
-            </form>
-
-            <?php
-            if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['name'])) {
-                $name = htmlspecialchars($_POST['name']);
-                $email = htmlspecialchars($_POST['email']);
-                $message = htmlspecialchars($_POST['message']);
-
-                echo "<div class='success-message'><i class='fas fa-check-circle'></i> Thank you, $name! We've received your message and will get back to you soon.</div>";
-            }
-            ?>
+            </div>
         </div>
     </div>
+    <?php else: ?>
+    <!-- Login Prompt for Non-logged-in Users -->
+    <div class="contact-card">
+        <div class="contact-form">
+            <h2><i class="fas fa-comments"></i> Live Chat</h2>
+            <div class="login-prompt">
+                <i class="fas fa-lock" style="font-size: 3rem; color: #d6336c; margin-bottom: 1rem;"></i>
+                <h3>Please Login to Use Live Chat</h3>
+                <p>To chat with our admin team in real-time, please log in to your account.</p>
+                <a href="login.php" class="submit-btn" style="display: inline-block; text-decoration: none; margin-top: 1rem;">
+                    <i class="fas fa-sign-in-alt"></i> Login Now
+                </a>
+            </div>
+        </div>
+    </div>
+    <?php endif; ?>
 </div>
 
 <footer>
@@ -332,6 +497,123 @@ if ($isLoggedIn) {
 
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<?php if ($isLoggedIn && $role === 'client'): ?>
+<script>
+    let conversationId = null;
+    let lastMessageId = 0;
+    let messageCheckInterval = null;
+
+    // Initialize chat on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeChat();
+    });
+
+    function initializeChat() {
+        // Get or create conversation
+        fetch('chat_api.php?action=get_or_create_conversation')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    conversationId = data.conversation_id;
+                    loadMessages();
+                    // Start polling for new messages every 2 seconds
+                    messageCheckInterval = setInterval(loadMessages, 2000);
+                }
+            })
+            .catch(error => console.error('Error initializing chat:', error));
+    }
+
+    function loadMessages() {
+        if (!conversationId) return;
+        
+        fetch(`chat_api.php?action=get_messages&conversation_id=${conversationId}&last_message_id=${lastMessageId}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success && data.messages.length > 0) {
+                    displayMessages(data.messages);
+                    lastMessageId = data.messages[data.messages.length - 1].id;
+                }
+            })
+            .catch(error => console.error('Error loading messages:', error));
+    }
+
+    function displayMessages(messages) {
+        const chatBox = document.getElementById('chatBox');
+        
+        // Remove empty state if present
+        const emptyState = chatBox.querySelector('.empty-chat-state');
+        if (emptyState) {
+            emptyState.remove();
+        }
+        
+        messages.forEach(msg => {
+            const isClient = msg.role === 'client';
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `chat-message ${isClient ? 'sent' : 'received'}`;
+            
+            const initials = (msg.firstname[0] + msg.lastname[0]).toUpperCase();
+            const time = new Date(msg.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            
+            messageDiv.innerHTML = `
+                <div class="chat-avatar">${initials}</div>
+                <div>
+                    <div class="chat-bubble">${escapeHtml(msg.message)}</div>
+                    <div class="chat-time">${time}</div>
+                </div>
+            `;
+            
+            chatBox.appendChild(messageDiv);
+        });
+        
+        // Scroll to bottom
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function sendChatMessage() {
+        const input = document.getElementById('chatInput');
+        const message = input.value.trim();
+        
+        if (!message || !conversationId) return;
+        
+        const formData = new FormData();
+        formData.append('conversation_id', conversationId);
+        formData.append('message', message);
+        
+        fetch('chat_api.php?action=send_message', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                input.value = '';
+                loadMessages();
+            }
+        })
+        .catch(error => console.error('Error sending message:', error));
+    }
+
+    function handleChatKeyPress(event) {
+        if (event.key === 'Enter') {
+            sendChatMessage();
+        }
+    }
+
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    // Clean up interval when page is unloaded
+    window.addEventListener('beforeunload', function() {
+        if (messageCheckInterval) {
+            clearInterval(messageCheckInterval);
+        }
+    });
+</script>
+<?php endif; ?>
 
 </body>
 </html>

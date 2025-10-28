@@ -222,6 +222,7 @@ $totalUsers = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
     <a href="reservations.php"><i class="fas fa-book"></i> New Reservations</a>
     <a href="confirmations.php"><i class="fas fa-check-circle"></i> Confirmations</a>
     <a href="reports.php"><i class="fas fa-chart-line"></i> Reports</a>
+    <a href="messages.php"><i class="fas fa-comments"></i> Messages</a>
     <a href="#" onclick="confirmLogout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
   </div>
 

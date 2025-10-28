@@ -55,6 +55,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $remainingTime == 0) {
         // Login successful
         $_SESSION["username"] = $user["username"];
         $_SESSION["role"] = $user["role"];
+        $_SESSION["user_id"] = $user["id"];
         $_SESSION['login_attempts'] = 0;
         $_SESSION['last_attempt_time'] = 0;
 
