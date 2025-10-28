@@ -180,6 +180,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $remainingTime == 0) {
         </div>
 
         <a href="forgot_password.php">Forgot Password?</a>
+        <a href="register.php">Create an Account</a>
 
         <?php if (!empty($error)): ?>
             <div class="error-msg"><?= htmlspecialchars($error) ?></div>
