@@ -1,5 +1,12 @@
 <?php
 session_start();
+
+// Check if user is logged in
+if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'client') {
+    header('Location: login.php');
+    exit();
+}
+
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 

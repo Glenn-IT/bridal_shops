@@ -1,5 +1,9 @@
 <?php
 session_start();
+
+// Allow guests to check date availability
+// No authentication check needed here - just checking dates
+
 header('Content-Type: application/json');
 
 // Database connection

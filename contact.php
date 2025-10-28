@@ -403,11 +403,10 @@ if ($isLoggedIn) {
           <li class="nav-item"><a class="nav-link" href="about.php">About</a></li>
         <?php elseif ($isLoggedIn && $role === 'admin'): ?>
           <li class="nav-item"><a class="nav-link" href="dashboard_admin.php">Dashboard</a></li>
-          <li class="nav-item"><a class="nav-link" href="services.php">Services</a></li>
           <li class="nav-item"><a class="nav-link active" href="contact.php">Contact</a></li>
           <li class="nav-item"><a class="nav-link" href="about.php">About</a></li>
         <?php else: ?>
-          <li class="nav-item"><a class="nav-link" href="services.php">Services</a></li>
+          <li class="nav-item"><a class="nav-link" href="dashboard_client.php">Home</a></li>
           <li class="nav-item"><a class="nav-link active" href="contact.php">Contact</a></li>
           <li class="nav-item"><a class="nav-link" href="about.php">About</a></li>
           <li class="nav-item"><a class="nav-link" href="login.php">Login</a></li>

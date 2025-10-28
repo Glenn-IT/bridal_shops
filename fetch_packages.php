@@ -1,4 +1,9 @@
 <?php
+session_start();
+
+// Allow guests to view packages, but they won't be able to submit bookings
+// No authentication check needed here - just fetching package data
+
 header('Content-Type: application/json; charset=utf-8');
 
 require_once 'config.php';

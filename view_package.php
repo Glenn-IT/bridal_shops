@@ -1,6 +1,8 @@
 <?php
 session_start();
 
+// Check if user is logged in (allow both logged in and guests to view)
+$isLoggedIn = isset($_SESSION['username']);
 
 $event = isset($_GET['event']) ? htmlspecialchars($_GET['event']) : 'Unknown Event';
 ?>

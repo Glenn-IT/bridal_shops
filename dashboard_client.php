@@ -3,29 +3,33 @@ session_start();
 include 'config.php';
 
 // Check if user is logged in
-if (!isset($_SESSION['username'])) {
-    header("Location: login.php");
-    exit();
+$isLoggedIn = isset($_SESSION['username']) && isset($_SESSION['role']);
+$role = $isLoggedIn ? $_SESSION['role'] : '';
+
+// Initialize user variables
+$firstname = '';
+$middlename = '';
+$lastname = '';
+$phone_number = '';
+$email = '';
+$fullname = 'Guest';
+
+// If logged in, fetch user details
+if ($isLoggedIn) {
+    $username = $_SESSION['username'];
+    $stmt = $pdo->prepare("SELECT firstname, middlename, lastname, phone_number, email FROM users WHERE username = ?");
+    $stmt->execute([$username]);
+    $user = $stmt->fetch();
+
+    if ($user) {
+        $firstname = $user['firstname'] ?? '';
+        $middlename = $user['middlename'] ?? '';
+        $lastname = $user['lastname'] ?? '';
+        $phone_number = $user['phone_number'] ?? '';
+        $email = $user['email'] ?? '';
+        $fullname = trim("$firstname $middlename $lastname");
+    }
 }
-
-// Fetch user details from database
-$username = $_SESSION['username'];
-$stmt = $pdo->prepare("SELECT firstname, middlename, lastname, phone_number, email FROM users WHERE username = ?");
-$stmt->execute([$username]);
-$user = $stmt->fetch();
-
-if (!$user) {
-    // If user not found, logout
-    header("Location: logout.php");
-    exit();
-}
-
-$firstname = $user['firstname'] ?? '';
-$middlename = $user['middlename'] ?? '';
-$lastname = $user['lastname'] ?? '';
-$phone_number = $user['phone_number'] ?? '';
-$email = $user['email'] ?? '';
-$fullname = trim("$firstname $middlename $lastname");
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -269,14 +273,22 @@ $fullname = trim("$firstname $middlename $lastname");
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item"><a class="nav-link active" href="#hero">Home</a></li>
-        <li class="nav-item"><a class="nav-link" href="notifications.php">Notifications</a></li>
-        <li class="nav-item"><a class="nav-link" href="booking_history.php">Booking History</a></li>
+        <?php if ($isLoggedIn): ?>
+          <li class="nav-item"><a class="nav-link" href="notifications.php">Notifications</a></li>
+          <li class="nav-item"><a class="nav-link" href="booking_history.php">Booking History</a></li>
+        <?php endif; ?>
         <li class="nav-item"><a class="nav-link" href="contact.php">Contact</a></li>
         <li class="nav-item"><a class="nav-link" href="about.php">About</a></li>
       </ul>
       <div class="d-flex align-items-center gap-2">
-        <span class="text-muted"><?= htmlspecialchars($fullname) ?></span>
-        <a href="logout.php" class="btn btn-sm btn-outline-secondary">Logout</a>
+        <?php if ($isLoggedIn): ?>
+          <span class="text-muted"><?= htmlspecialchars($fullname) ?></span>
+          <a href="logout.php" class="btn btn-sm btn-outline-secondary">Logout</a>
+        <?php else: ?>
+          <span class="text-muted">Guest</span>
+          <a href="login.php" class="btn btn-sm btn-outline-primary">Login</a>
+          <a href="register.php" class="btn btn-sm btn-primary">Register</a>
+        <?php endif; ?>
         <a href="contact.php" class="btn btn-sm btn-contact">Contact Us</a>
       </div>
     </div>
@@ -337,7 +349,11 @@ $fullname = trim("$firstname $middlename $lastname");
             <h3><?= htmlspecialchars($service['title']) ?></h3>
             <p><?= htmlspecialchars($service['desc']) ?></p>
             <a href="view_package.php?event=<?= urlencode($service['type']) ?>" class="service-btn">View Package</a>
-            <a href="#booknow" class="service-btn" onclick="selectService('<?= htmlspecialchars($service['type']) ?>')">Book Now</a>
+            <?php if ($isLoggedIn): ?>
+              <a href="#booknow" class="service-btn" onclick="selectService('<?= htmlspecialchars($service['type']) ?>')">Book Now</a>
+            <?php else: ?>
+              <a href="login.php" class="service-btn">Login to Book</a>
+            <?php endif; ?>
           </div>
         </div>
       <?php endforeach; ?>
@@ -348,6 +364,18 @@ $fullname = trim("$firstname $middlename $lastname");
 <!-- Book Now Section -->
 <div id="booknow" class="book-now-section">
   <div class="book-now-card">
+    <?php if (!$isLoggedIn): ?>
+      <!-- Guest View - Prompt to Login -->
+      <div class="text-center py-5">
+        <h2>Book a Reservation</h2>
+        <div class="alert alert-info my-4">
+          <i class="fas fa-info-circle"></i> Please log in to make a reservation.
+        </div>
+        <a href="login.php" class="btn btn-primary btn-lg px-5">Login to Book Now</a>
+        <p class="mt-3">Don't have an account? <a href="register.php">Register here</a></p>
+      </div>
+    <?php else: ?>
+      <!-- Logged In User - Show Booking Form -->
     <h2>Book a Reservation</h2>
     
     <!-- Success/Error Messages -->
@@ -435,6 +463,7 @@ $fullname = trim("$firstname $middlename $lastname");
         <a href="#hero" class="btn btn-secondary btn-action">Back to Top</a>
       </div>
     </form>
+    <?php endif; ?>
   </div>
 </div>
 
