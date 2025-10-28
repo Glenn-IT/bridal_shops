@@ -231,8 +231,6 @@ if ($isLoggedIn) {
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <?php if ($isLoggedIn && $role === 'client'): ?>
           <li class="nav-item"><a class="nav-link" href="dashboard_client.php#hero">Home</a></li>
-          <li class="nav-item"><a class="nav-link" href="services.php">Services</a></li>
-          <li class="nav-item"><a class="nav-link" href="dashboard_client.php#booknow">Book Now</a></li>
           <li class="nav-item"><a class="nav-link" href="notifications.php">Notifications</a></li>
           <li class="nav-item"><a class="nav-link" href="booking_history.php">Booking History</a></li>
           <li class="nav-item"><a class="nav-link active" href="contact.php">Contact</a></li>

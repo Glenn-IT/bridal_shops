@@ -233,8 +233,6 @@ $bookings = $bookingStmt->fetchAll(PDO::FETCH_ASSOC);
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item"><a class="nav-link" href="dashboard_client.php#hero">Home</a></li>
-        <li class="nav-item"><a class="nav-link" href="services.php">Services</a></li>
-        <li class="nav-item"><a class="nav-link" href="dashboard_client.php#booknow">Book Now</a></li>
         <li class="nav-item"><a class="nav-link" href="notifications.php">Notifications</a></li>
         <li class="nav-item"><a class="nav-link active" href="booking_history.php">Booking History</a></li>
         <li class="nav-item"><a class="nav-link" href="contact.php">Contact</a></li>

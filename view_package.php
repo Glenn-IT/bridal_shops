@@ -105,7 +105,7 @@ $event = isset($_GET['event']) ? htmlspecialchars($_GET['event']) : 'Unknown Eve
     <img id="gold-img" src="images/gold_package.jpg" alt="Gold Package">
   </div>
 
-  <a href="services.php" class="btn-back">← Back to Services</a>
+  <a href="dashboard_client.php#services" class="btn-back">← Back to Services</a>
 </div>
 
 <script>

@@ -105,6 +105,81 @@ $fullname = trim("$firstname $middlename $lastname");
       font-weight: 700;
     }
 
+    /* Services Section */
+    .services-section {
+      padding: 5rem 1rem;
+      background-color: #2d2d2d;
+      color: white;
+    }
+    .services-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+    .services-header h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.8rem;
+      margin-bottom: 10px;
+    }
+    .services-header p {
+      font-size: 1.1rem;
+      max-width: 700px;
+      margin: auto;
+      color: #ccc;
+    }
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 30px;
+      max-width: 1200px;
+      margin: auto;
+    }
+    .service-card {
+      background-color: #fff;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+      transition: transform 0.3s ease;
+      color: #333;
+    }
+    .service-card:hover {
+      transform: translateY(-5px);
+    }
+    .service-card img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+    }
+    .service-card-content {
+      padding: 20px;
+    }
+    .service-card h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      margin-bottom: 10px;
+    }
+    .service-card p {
+      font-size: 0.95rem;
+      color: #555;
+      margin-bottom: 15px;
+    }
+    .service-btn {
+      display: inline-block;
+      padding: 8px 16px;
+      background-color: #e76f51;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.9rem;
+      margin-right: 10px;
+      transition: background 0.2s ease;
+    }
+    .service-btn:hover {
+      background-color: #d45b3f;
+      color: white;
+    }
+
     .book-now-section {
       min-height: 100vh;
       padding: 5rem 1rem;
@@ -194,8 +269,6 @@ $fullname = trim("$firstname $middlename $lastname");
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item"><a class="nav-link active" href="#hero">Home</a></li>
-        <li class="nav-item"><a class="nav-link" href="services.php">Services</a></li>
-        <li class="nav-item"><a class="nav-link" href="#booknow">Book Now</a></li>
         <li class="nav-item"><a class="nav-link" href="notifications.php">Notifications</a></li>
         <li class="nav-item"><a class="nav-link" href="booking_history.php">Booking History</a></li>
         <li class="nav-item"><a class="nav-link" href="contact.php">Contact</a></li>
@@ -217,6 +290,58 @@ $fullname = trim("$firstname $middlename $lastname");
     <p class="text-uppercase mb-2">Capturing Moments Creating Memories</p>
     <h1>Making Every Smile, Every Laugh, and Every Tear Timeless</h1>
     <p>At Mae’s Bridal Shop, we turn fleeting moments into forever memories. From weddings and birthdays to personal milestones, we capture your story with passion and elegance.</p>
+  </div>
+</div>
+
+<!-- Services Section -->
+<div id="services" class="services-section">
+  <div class="container">
+    <div class="services-header">
+      <h2>Preserving Memories For All Occasions</h2>
+      <p>From tearjerking family reunions to lavish milestones, Mae's Bridal Shop captures every story worth remembering.</p>
+    </div>
+
+    <div class="services-grid">
+      <?php
+      $services = [
+        [
+          'title' => 'Birthday Collections',
+          'desc' => 'From intimate gatherings to extravagant parties, celebrate another year with timeless moments.',
+          'images' => 'bg.jpeg',
+          'type' => 'Birthday'
+        ],
+        [
+          'title' => 'Wedding Collections',
+          'desc' => 'Celebrate your "I do" with elegance. Our lens captures every kiss, every glance, every vow.',
+          'images' => 'se.jpeg',
+          'type' => 'Wedding'
+        ],
+        [
+          'title' => 'Anniversary Collections',
+          'desc' => 'Whether it\'s the 1st or 50th, let us preserve your years of love and laughter.',
+          'images' => 'anv.webp',
+          'type' => 'Anniversary'
+        ],
+        [
+          'title' => 'Corporate Events',
+          'desc' => 'Professional events deserve professional coverage. We document seminars, parties, launches, and more.',
+          'images' => 'cor.jpg',
+          'type' => 'Corporate'
+        ]
+      ];
+
+      foreach ($services as $service): ?>
+        <div class="service-card">
+          <img src="images/<?= htmlspecialchars($service['images']) ?>" alt="<?= htmlspecialchars($service['title']) ?>">
+          <div class="service-card-content">
+            <h3><?= htmlspecialchars($service['title']) ?></h3>
+            <p><?= htmlspecialchars($service['desc']) ?></p>
+            <a href="view_package.php?event=<?= urlencode($service['type']) ?>" class="service-btn">View Package</a>
+            <a href="#booknow" class="service-btn" onclick="selectService('<?= htmlspecialchars($service['type']) ?>')">Book Now</a>
+          </div>
+        </div>
+      <?php endforeach; ?>
+    </div>
   </div>
 </div>
 
@@ -319,6 +444,28 @@ $fullname = trim("$firstname $middlename $lastname");
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+// Function to select service from the services section
+function selectService(serviceType) {
+  // Wait for the page to scroll to the booking section
+  setTimeout(function() {
+    const serviceSelect = document.getElementById('service_type');
+    
+    // Map the service type to the correct option value
+    const serviceMap = {
+      'Birthday': 'Birthday',
+      'Wedding': 'Wedding',
+      'Anniversary': 'Anniversary',
+      'Corporate': 'Corporate'
+    };
+    
+    if (serviceMap[serviceType]) {
+      serviceSelect.value = serviceMap[serviceType];
+      // Trigger the change event to load packages
+      serviceSelect.dispatchEvent(new Event('change'));
+    }
+  }, 100);
+}
+
 // Service Type change event - Load packages dynamically
 document.getElementById('service_type').addEventListener('change', function() {
   const eventType = this.value;
