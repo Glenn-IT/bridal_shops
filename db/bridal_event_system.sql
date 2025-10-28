@@ -28,41 +28,23 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `bookings` (
-  `id` int(11) NOT NULL,
-  `firstname` varchar(100) DEFAULT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `firstname` varchar(100) NOT NULL,
   `middlename` varchar(100) DEFAULT NULL,
-  `lastname` varchar(100) DEFAULT NULL,
-  `username` varchar(100) NOT NULL,
-  `phone_number` varchar(20) DEFAULT NULL,
-  `event_name` varchar(255) NOT NULL,
-  `service_type` varchar(100) NOT NULL,
-  `event_datetime` datetime NOT NULL,
-  `event_type` varchar(50) NOT NULL,
-  `fullname` varchar(150) NOT NULL,
-  `phone` varchar(20) NOT NULL,
-  `event` varchar(255) NOT NULL,
-  `contact` varchar(20) NOT NULL,
+  `lastname` varchar(100) NOT NULL,
   `email` varchar(100) NOT NULL,
-  `venue_package` varchar(50) NOT NULL,
-  `gowns_package` varchar(50) NOT NULL,
-  `themes_package` varchar(50) NOT NULL,
-  `event_date` datetime NOT NULL,
+  `phone_number` varchar(11) NOT NULL,
+  `service_type` varchar(100) NOT NULL,
+  `event_name` varchar(255) NOT NULL,
+  `event_datetime` datetime NOT NULL,
   `location` text NOT NULL,
-  `total_price` decimal(10,2) NOT NULL,
+  `status` varchar(50) NOT NULL DEFAULT 'Pending',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `status` varchar(50) NOT NULL DEFAULT 'pending'
+  PRIMARY KEY (`id`),
+  KEY `idx_event_datetime` (`event_datetime`),
+  KEY `idx_email` (`email`),
+  KEY `idx_status` (`status`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `bookings`
---
-
-INSERT INTO `bookings` (`id`, `firstname`, `middlename`, `lastname`, `username`, `phone_number`, `event_name`, `service_type`, `event_datetime`, `event_type`, `fullname`, `phone`, `event`, `contact`, `email`, `venue_package`, `gowns_package`, `themes_package`, `event_date`, `location`, `total_price`, `created_at`, `status`) VALUES
-(58, 'Nicole', 'Daguio', 'Acojedo', '', '', 'Wedding', 'Wedding Gown', '2025-03-10 10:00:00', '', '', '', '', '', '', '', '', '', '0000-00-00 00:00:00', 'campo', 0.00, '2025-09-29 04:23:53', 'Pending'),
-(59, 'Roderic', 'Pacion', 'Casauay', '', 'abc', 'wedding', 'Wedding Gown', '2025-09-29 10:32:00', '', '', '', '', '', 'roderic.casauaygmail.com', '', '', '', '0000-00-00 00:00:00', 'piat', 0.00, '2025-09-30 01:33:43', 'Pending'),
-(60, 'Brian', 'A', 'Ilac', '', '09971737060', 'wedding', 'Wedding Gown', '2025-10-05 09:40:00', '', '', '', '', '', 'roderic.casauay@gmail.com', '', '', '', '0000-00-00 00:00:00', 'piat', 0.00, '2025-09-30 01:39:54', 'Approved'),
-(61, 'Angelie', 'Lagoc', 'Pagutalan', '', '09971737060', 'Wedding', 'Wedding Gown', '2025-10-06 10:50:00', '', '', '', '', '', 'delacruzmelody847@gmail.com', '', '', '', '0000-00-00 00:00:00', 'piat', 0.00, '2025-09-30 01:49:53', 'Approved'),
-(62, 'Roderic', 'Pacion', 'Casauay', '', '09971737060', 'Wedding', 'Wedding Gown', '2025-10-05 10:51:00', '', '', '', '', '', 'roderic.casauay@gmail.com', '', '', '', '0000-00-00 00:00:00', 'piat', 0.00, '2025-09-30 01:51:53', 'Approved');
 
 -- --------------------------------------------------------
 
@@ -245,11 +227,6 @@ INSERT INTO `users` (`id`, `firstname`, `middlename`, `lastname`, `username`, `p
 -- Indexes for dumped tables
 --
 
---
--- Indexes for table `bookings`
---
-ALTER TABLE `bookings`
-  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `clients`
@@ -303,7 +280,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `bookings`
 --
 ALTER TABLE `bookings`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=63;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `clients`

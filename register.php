@@ -96,6 +96,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 
+    // Check if the combination of firstname, middlename, and lastname already exists
+    if (empty($errors)) {
+        $stmt = $pdo->prepare("SELECT id FROM users WHERE firstname = ? AND middlename = ? AND lastname = ?");
+        $stmt->execute([$firstname, $middlename, $lastname]);
+        if ($stmt->fetch()) {
+            $errors[] = "A user with this exact name already exists. Please verify your information.";
+        }
+    }
+
     // If no errors, insert into database
     if (empty($errors)) {
         try {

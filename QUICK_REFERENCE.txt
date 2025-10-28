@@ -1,0 +1,205 @@
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                    BRIDAL SHOP SYSTEM - QUICK REFERENCE                      ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+📋 COPY-PASTE SQL QUERIES
+═══════════════════════════════════════════════════════════════════════════════
+
+1️⃣ DROP AND RECREATE BOOKINGS TABLE
+───────────────────────────────────────────────────────────────────────────────
+DROP TABLE IF EXISTS `bookings`;
+
+CREATE TABLE `bookings` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `firstname` varchar(100) NOT NULL,
+  `middlename` varchar(100) DEFAULT NULL,
+  `lastname` varchar(100) NOT NULL,
+  `email` varchar(100) NOT NULL,
+  `phone_number` varchar(11) NOT NULL,
+  `service_type` varchar(100) NOT NULL,
+  `event_name` varchar(255) NOT NULL,
+  `event_datetime` datetime NOT NULL,
+  `location` text NOT NULL,
+  `status` varchar(50) NOT NULL DEFAULT 'Pending',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  KEY `idx_event_datetime` (`event_datetime`),
+  KEY `idx_email` (`email`),
+  KEY `idx_status` (`status`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+───────────────────────────────────────────────────────────────────────────────
+
+2️⃣ VIEW ALL BOOKINGS
+───────────────────────────────────────────────────────────────────────────────
+SELECT * FROM bookings ORDER BY created_at DESC;
+
+───────────────────────────────────────────────────────────────────────────────
+
+3️⃣ VIEW PENDING BOOKINGS
+───────────────────────────────────────────────────────────────────────────────
+SELECT * FROM bookings WHERE status = 'Pending' ORDER BY event_datetime ASC;
+
+───────────────────────────────────────────────────────────────────────────────
+
+4️⃣ UPDATE USER PHONE NUMBER (if missing)
+───────────────────────────────────────────────────────────────────────────────
+UPDATE users SET phone_number = '09123456789' WHERE username = 'angelie';
+
+───────────────────────────────────────────────────────────────────────────────
+
+5️⃣ VIEW ALL USERS WITH THEIR INFO
+───────────────────────────────────────────────────────────────────────────────
+SELECT id, firstname, middlename, lastname, phone_number, email, username, role 
+FROM users ORDER BY id;
+
+───────────────────────────────────────────────────────────────────────────────
+
+6️⃣ CHECK TABLE STRUCTURE
+───────────────────────────────────────────────────────────────────────────────
+DESCRIBE bookings;
+DESCRIBE users;
+
+───────────────────────────────────────────────────────────────────────────────
+
+
+✨ IMPLEMENTED FEATURES
+═══════════════════════════════════════════════════════════════════════════════
+
+✅ Registration Form (register.php)
+   • Prevents duplicate emails
+   • Prevents duplicate names (firstname + middlename + lastname)
+   • Phone validation (11 digits, starts with 09)
+   • Gmail validation
+   • Password strength check (min 6 characters)
+   • Security question for password recovery
+
+✅ Dashboard Client (dashboard_client.php)
+   • Auto-populates First Name (readonly)
+   • Auto-populates Middle Name (readonly)
+   • Auto-populates Last Name (readonly)
+   • Auto-populates Phone Number (readonly)
+   • Auto-populates Gmail (readonly) ⭐ NEW
+   • User's full name displays in navbar
+   • Prevents manual editing of personal info
+
+✅ Bookings Table
+   • Simplified structure with essential fields
+   • Added email field
+   • Database indexes for better performance
+   • Default status 'Pending'
+   • Automatic timestamp
+
+
+🔗 QUICK ACCESS URLS
+═══════════════════════════════════════════════════════════════════════════════
+
+Registration:       http://localhost/bridal_shops/register.php
+Login:              http://localhost/bridal_shops/login.php
+Client Dashboard:   http://localhost/bridal_shops/dashboard_client.php
+Admin Dashboard:    http://localhost/bridal_shops/dashboard_admin.php
+Test Page:          http://localhost/bridal_shops/test_registration.php
+phpMyAdmin:         http://localhost/phpmyadmin
+
+
+📁 IMPORTANT FILES
+═══════════════════════════════════════════════════════════════════════════════
+
+Configuration:
+  • config.php - Database connection
+
+User Management:
+  • register.php - New customer registration
+  • login.php - User login
+  • logout.php - User logout
+  • forgot_password.php - Password recovery
+
+Client Pages:
+  • dashboard_client.php - Client dashboard with booking form
+  • submit_booking.php - Process booking submissions
+
+Database:
+  • db/bridal_event_system.sql - Full database dump
+  • db/create_bookings_table.sql - Bookings table only
+  • db/migration_add_phone_number.sql - Add phone to users
+
+Documentation:
+  • REGISTRATION_SETUP.md - Registration system docs
+  • UPDATES_SUMMARY.md - Complete updates documentation
+  • QUICK_REFERENCE.txt - This file
+
+
+🧪 TEST SCENARIOS
+═══════════════════════════════════════════════════════════════════════════════
+
+Test 1: Duplicate Email Prevention
+  1. Register: john@gmail.com
+  2. Try again: john@gmail.com
+  ❌ Result: "Email already registered"
+
+Test 2: Duplicate Name Prevention
+  1. Register: John Paul Doe
+  2. Try again: John Paul Doe
+  ❌ Result: "A user with this exact name already exists"
+
+Test 3: Auto-Population
+  1. Login as existing client
+  2. Go to dashboard
+  3. Check booking form
+  ✅ Result: All personal fields are pre-filled and readonly
+
+Test 4: New Booking
+  1. Login as client
+  2. Fill only event details (personal info auto-filled)
+  3. Submit booking
+  ✅ Result: Booking saved with status 'Pending'
+
+
+🔧 TROUBLESHOOTING
+═══════════════════════════════════════════════════════════════════════════════
+
+Problem: "Dashboard shows empty fields"
+Solution: Update user's phone_number in database:
+  UPDATE users SET phone_number = '09123456789' WHERE username = 'youruser';
+
+Problem: "Bookings table not found"
+Solution: Run the SQL from db/create_bookings_table.sql in phpMyAdmin
+
+Problem: "Cannot register duplicate name"
+Solution: This is intended behavior. Use different name or contact admin.
+
+Problem: "Page redirects to login"
+Solution: Session expired or not logged in. Login again.
+
+
+📊 DATABASE SCHEMA
+═══════════════════════════════════════════════════════════════════════════════
+
+users table:
+  • id (PRIMARY KEY)
+  • firstname, middlename, lastname
+  • phone_number (11 digits)
+  • username (UNIQUE)
+  • password (hashed)
+  • role (default: 'client')
+  • email (UNIQUE)
+  • security_question
+  • security_answer_hash
+  • status (default: 'active')
+
+bookings table:
+  • id (PRIMARY KEY)
+  • firstname, middlename, lastname
+  • email
+  • phone_number
+  • service_type
+  • event_name
+  • event_datetime (INDEXED)
+  • location
+  • status (default: 'Pending') (INDEXED)
+  • created_at (auto timestamp)
+
+
+═══════════════════════════════════════════════════════════════════════════════
+              🎉 All Features Successfully Implemented! 🎉
+═══════════════════════════════════════════════════════════════════════════════

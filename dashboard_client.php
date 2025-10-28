@@ -1,6 +1,31 @@
 <?php
 session_start();
+include 'config.php';
 
+// Check if user is logged in
+if (!isset($_SESSION['username'])) {
+    header("Location: login.php");
+    exit();
+}
+
+// Fetch user details from database
+$username = $_SESSION['username'];
+$stmt = $pdo->prepare("SELECT firstname, middlename, lastname, phone_number, email FROM users WHERE username = ?");
+$stmt->execute([$username]);
+$user = $stmt->fetch();
+
+if (!$user) {
+    // If user not found, logout
+    header("Location: logout.php");
+    exit();
+}
+
+$firstname = $user['firstname'] ?? '';
+$middlename = $user['middlename'] ?? '';
+$lastname = $user['lastname'] ?? '';
+$phone_number = $user['phone_number'] ?? '';
+$email = $user['email'] ?? '';
+$fullname = trim("$firstname $middlename $lastname");
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -176,7 +201,7 @@ session_start();
         <li class="nav-item"><a class="nav-link" href="about.php">About</a></li>
       </ul>
       <div class="d-flex align-items-center gap-2">
-        <span class="text-muted">Angelie, <strong>
+        <span class="text-muted"><?= htmlspecialchars($fullname) ?></span>
         <a href="logout.php" class="btn btn-sm btn-outline-secondary">Logout</a>
         <a href="contact.php" class="btn btn-sm btn-contact">Contact Us</a>
       </div>
@@ -200,41 +225,60 @@ session_start();
     <h2>Book a Reservation</h2>
     <form action="submit_booking.php" method="POST">
       <div class="mb-3">
-  <label for="firstname" class="form-label">First Name</label>
-  <input type="text" name="firstname" id="firstname" class="form-control" placeholder="ENTER YOUR FIRST NAME"
+        <label for="firstname" class="form-label">First Name</label>
+        <input type="text" name="firstname" id="firstname" class="form-control" 
+               value="<?= htmlspecialchars($firstname) ?>" placeholder="ENTER YOUR FIRST NAME" readonly required>
+      </div>
 
-<div class="mb-3">
-  <label for="middlename" class="form-label">Middle Name</label>
-  <input type="text" name="middlename" id="middlename" class="form-control" placeholder="ENTER YOUR MIDDLE NAME">
-</div>
+      <div class="mb-3">
+        <label for="middlename" class="form-label">Middle Name</label>
+        <input type="text" name="middlename" id="middlename" class="form-control" 
+               value="<?= htmlspecialchars($middlename) ?>" placeholder="ENTER YOUR MIDDLE NAME" readonly>
+      </div>
 
-<div class="mb-3">
-  <label for="lastname" class="form-label">lastname</label>
-  <input type="text" name="lastname" id="lastname" class="form-control" placeholder="ENTER YOUR LAST NAME"required>
-</div>
->
+      <div class="mb-3">
+        <label for="lastname" class="form-label">Last Name</label>
+        <input type="text" name="lastname" id="lastname" class="form-control" 
+               value="<?= htmlspecialchars($lastname) ?>" placeholder="ENTER YOUR LAST NAME" readonly required>
+      </div>
 
-      <label for="phone">Phone Number  </label>
-      <input type="tel" name="phone" id="phone" class="form-control" placeholder="ENTER YOUR PHONE NUMBER" required pattern="[0-9]{11}">
+      <div class="mb-3">
+        <label for="phone" class="form-label">Phone Number</label>
+        <input type="tel" name="phone_number" id="phone" class="form-control" 
+               value="<?= htmlspecialchars($phone_number) ?>" placeholder="ENTER YOUR PHONE NUMBER" readonly required pattern="[0-9]{11}">
+      </div>
 
-      <label for="service_type">Service Type</label>
-      <select name="service_type" id="service_type" class="form-select" required>
-        <option value="">-- Select Gown Type --</option>
-        <option value="Wedding Gown">Wedding Gown</option>
-        <option value="Ball Gown">Ball Gown</option>
-        <option value="Evening Gown">Evening Gown</option>
-        <option value="Debutante Gown">Debutante Gown</option>
-       
-      </select>
+      <div class="mb-3">
+        <label for="email" class="form-label">Gmail</label>
+        <input type="email" name="email" id="email" class="form-control" 
+               value="<?= htmlspecialchars($email) ?>" placeholder="ENTER YOUR EMAIL" readonly required>
+      </div>
 
-      <label for="event_name">Event Name</label>
-      <input type="text" name="event_name" id="event_name" class="form-control" placeholder="e.g. Jane's Wedding" required>
+      <div class="mb-3">
+        <label for="service_type" class="form-label">Service Type</label>
+        <select name="service_type" id="service_type" class="form-select" required>
+          <option value="">-- Select Gown Type --</option>
+          <option value="Wedding Gown">Wedding Gown</option>
+          <option value="Ball Gown">Ball Gown</option>
+          <option value="Evening Gown">Evening Gown</option>
+          <option value="Debutante Gown">Debutante Gown</option>
+        </select>
+      </div>
 
-      <label for="event_datetime">Event Date & Time</label>
-      <input type="datetime-local" name="event_datetime" id="event_datetime" class="form-control" required>
+      <div class="mb-3">
+        <label for="event_name" class="form-label">Event Name</label>
+        <input type="text" name="event_name" id="event_name" class="form-control" placeholder="e.g. Jane's Wedding" required>
+      </div>
 
-      <label for="location">Event Location</label>
-      <textarea name="location" id="location" class="form-control" rows="3" required></textarea>
+      <div class="mb-3">
+        <label for="event_datetime" class="form-label">Event Date & Time</label>
+        <input type="datetime-local" name="event_datetime" id="event_datetime" class="form-control" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="location" class="form-label">Event Location</label>
+        <textarea name="location" id="location" class="form-control" rows="3" required></textarea>
+      </div>
 
       <div class="btn-group-action">
         <button type="submit" name="submit_booking" class="btn btn-primary btn-action">Submit Reservation</button>
