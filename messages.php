@@ -505,11 +505,20 @@ $adminId = $_SESSION['user_id'];
       const container = document.getElementById('chatMessages');
       
       messages.forEach(msg => {
+        // Check if message already exists (avoid duplicates)
+        if (document.querySelector(`[data-message-id="${msg.id}"]`)) {
+          return; // Skip this message, it's already displayed
+        }
+        
         const isAdmin = msg.role === 'admin';
         const messageDiv = document.createElement('div');
         messageDiv.className = `message ${isAdmin ? 'sent' : 'received'}`;
+        messageDiv.setAttribute('data-message-id', msg.id); // Add unique identifier
         
-        const initials = (msg.firstname[0] + msg.lastname[0]).toUpperCase();
+        // Handle empty names
+        const firstname = msg.firstname || 'Admin';
+        const lastname = msg.lastname || 'User';
+        const initials = firstname && lastname ? (firstname[0] + lastname[0]).toUpperCase() : firstname[0].toUpperCase();
         const time = new Date(msg.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
         
         messageDiv.innerHTML = `
@@ -531,7 +540,12 @@ $adminId = $_SESSION['user_id'];
       const input = document.getElementById('messageInput');
       const message = input.value.trim();
       
-      if (!message || !currentConversationId) return;
+      if (!message || !currentConversationId) {
+        console.error('Cannot send message:', {message, currentConversationId});
+        return;
+      }
+      
+      console.log('Sending message:', message, 'to conversation:', currentConversationId);
       
       const formData = new FormData();
       formData.append('conversation_id', currentConversationId);
@@ -541,12 +555,23 @@ $adminId = $_SESSION['user_id'];
         method: 'POST',
         body: formData
       })
-      .then(response => response.json())
+      .then(response => {
+        console.log('Response status:', response.status);
+        return response.json();
+      })
       .then(data => {
+        console.log('Send response:', data);
         if (data.success) {
           input.value = '';
           loadMessages();
+        } else {
+          console.error('Failed to send message:', data.message);
+          alert('Failed to send message: ' + data.message);
         }
+      })
+      .catch(error => {
+        console.error('Error sending message:', error);
+        alert('Error sending message. Check console for details.');
       });
     }
 

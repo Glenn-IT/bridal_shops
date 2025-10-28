@@ -2,20 +2,22 @@
 
 ## 📍 Important URLs
 
-| Page | URL | Who Can Access |
-|------|-----|----------------|
-| **Test Page** | `http://localhost/bridal_shops/test_chat.php` | Both Client & Admin |
-| **Client Chat** | `http://localhost/bridal_shops/contact.php` | Clients (logged in) |
-| **Admin Messages** | `http://localhost/bridal_shops/messages.php` | Admin only |
+| Page               | URL                                           | Who Can Access      |
+| ------------------ | --------------------------------------------- | ------------------- |
+| **Test Page**      | `http://localhost/bridal_shops/test_chat.php` | Both Client & Admin |
+| **Client Chat**    | `http://localhost/bridal_shops/contact.php`   | Clients (logged in) |
+| **Admin Messages** | `http://localhost/bridal_shops/messages.php`  | Admin only          |
 
 ## ⚡ Quick Test Steps
 
 ### 1️⃣ First Time Setup (One Time Only)
+
 ```bash
 # Tables already created - skip this unless you have issues
 ```
 
 ### 2️⃣ Test as Client
+
 1. Login as client
 2. Go to: `test_chat.php`
 3. Click all test buttons
@@ -24,7 +26,8 @@
 6. Chat with admin
 
 ### 3️⃣ Test as Admin
-1. Login as admin  
+
+1. Login as admin
 2. Go to: `test_chat.php`
 3. Run all tests
 4. Go to: `messages.php`
@@ -35,17 +38,17 @@
 ✅ **Fixed:** user_id session issue  
 ✅ **Fixed:** Send button not working  
 ✅ **Enhanced:** Error messages  
-✅ **Added:** Comprehensive test page  
+✅ **Added:** Comprehensive test page
 
 ## 🆘 Troubleshooting One-Liners
 
-| Problem | Quick Fix |
-|---------|-----------|
-| user_id error | Refresh page or logout/login |
-| Send doesn't work | Check browser console (F12) |
-| Messages don't appear | Reload page, check test page |
-| Tables missing | Already created - check phpMyAdmin |
-| Connection error | Restart XAMPP MySQL |
+| Problem               | Quick Fix                          |
+| --------------------- | ---------------------------------- |
+| user_id error         | Refresh page or logout/login       |
+| Send doesn't work     | Check browser console (F12)        |
+| Messages don't appear | Reload page, check test page       |
+| Tables missing        | Already created - check phpMyAdmin |
+| Connection error      | Restart XAMPP MySQL                |
 
 ## 📱 Test Page Features
 

@@ -548,11 +548,20 @@ if ($isLoggedIn) {
         }
         
         messages.forEach(msg => {
+            // Check if message already exists (avoid duplicates)
+            if (document.querySelector(`[data-message-id="${msg.id}"]`)) {
+                return; // Skip this message, it's already displayed
+            }
+            
             const isClient = msg.role === 'client';
             const messageDiv = document.createElement('div');
             messageDiv.className = `chat-message ${isClient ? 'sent' : 'received'}`;
+            messageDiv.setAttribute('data-message-id', msg.id); // Add unique identifier
             
-            const initials = (msg.firstname[0] + msg.lastname[0]).toUpperCase();
+            // Handle empty names
+            const firstname = msg.firstname || 'Admin';
+            const lastname = msg.lastname || '';
+            const initials = firstname && lastname ? (firstname[0] + lastname[0]).toUpperCase() : firstname[0].toUpperCase();
             const time = new Date(msg.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
             
             messageDiv.innerHTML = `
@@ -574,7 +583,12 @@ if ($isLoggedIn) {
         const input = document.getElementById('chatInput');
         const message = input.value.trim();
         
-        if (!message || !conversationId) return;
+        if (!message || !conversationId) {
+            console.error('Cannot send message:', {message, conversationId});
+            return;
+        }
+        
+        console.log('Sending message:', message, 'to conversation:', conversationId);
         
         const formData = new FormData();
         formData.append('conversation_id', conversationId);
@@ -584,14 +598,22 @@ if ($isLoggedIn) {
             method: 'POST',
             body: formData
         })
-        .then(response => response.json())
+        .then(response => {
+            console.log('Response status:', response.status);
+            return response.json();
+        })
         .then(data => {
+            console.log('Send response:', data);
             if (data.success) {
                 input.value = '';
                 loadMessages();
+            } else {
+                console.error('Failed to send message:', data.message);
             }
         })
-        .catch(error => console.error('Error sending message:', error));
+        .catch(error => {
+            console.error('Error sending message:', error);
+        });
     }
 
     function handleChatKeyPress(event) {
