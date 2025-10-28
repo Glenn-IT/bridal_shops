@@ -172,6 +172,7 @@ if (!$result) {
   <a href="reservations.php"><i class="fa fa-book"></i> New Reservations</a>
   <a href="confirmations.php" class="active"><i class="fas fa-envelope-open-text"></i> Confirmations</a>
   <a href="reports.php"><i class="fas fa-chart-line"></i> Reports</a>
+  <a href="messages.php"><i class="fa fa-comments"></i> Messages</a>
   <a href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a>
 </div>
 

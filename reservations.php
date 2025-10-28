@@ -147,6 +147,7 @@ if (!$result) {
     <a href="reservations.php" class="active"><i class="fa fa-book"></i> New Reservations</a>
     <a href="confirmations.php"><i class="fa fa-check-circle"></i> Confirmations</a>
     <a href="reports.php"><i class="fa fa-chart-line"></i> Reports</a>
+    <a href="messages.php"><i class="fa fa-comments"></i> Messages</a>
     <a href="logout.php"><i class="fa fa-sign-out-alt"></i> Logout</a>
   </div>
 

@@ -311,9 +311,7 @@ $bookings = $bookingStmt->fetchAll(PDO::FETCH_ASSOC);
                     <i class="fas fa-calendar-times"></i>
                     <h4>No Bookings Yet</h4>
                     <p>You haven't made any bookings yet. Start by browsing our services!</p>
-                    <a href="services.php" class="btn btn-view mt-3">
-                        <i class="fas fa-search"></i> Browse Services
-                    </a>
+                   
                 </div>
             <?php endif; ?>
         </div>

@@ -146,6 +146,7 @@ $result = $mysqli->query("SELECT event_name, firstname, middlename, lastname, ev
   <a href="reservations.php"><i class="fas fa-book"></i> New Reservations</a>
   <a href="confirmations.php"><i class="fas fa-check-circle"></i> Confirmations</a>
   <a href="reports.php" class="active"><i class="fas fa-chart-line"></i> Reports</a>
+  <a href="messages.php"><i class="fas fa-comments"></i> Messages</a>
   <a href="logout.php" onclick="return confirm('Are you sure you want to logout?')">
     <i class="fas fa-sign-out-alt"></i> Logout (<?= htmlspecialchars($_SESSION['username']) ?>)
   </a>
