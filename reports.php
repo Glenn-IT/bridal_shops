@@ -13,17 +13,17 @@ if ($mysqli->connect_errno) {
     die("Failed to connect to MySQL: " . $mysqli->connect_error);
 }
 
-// ✅ Fetch only 'Approved' bookings
-$result = $mysqli->query("SELECT event_name, firstname, middlename, lastname, event_datetime 
+// ✅ Fetch both 'Approved' and 'Declined' bookings
+$result = $mysqli->query("SELECT service_type, event_name, firstname, middlename, lastname, event_datetime, status 
                           FROM bookings 
-                          WHERE status = 'Approved' 
+                          WHERE status IN ('Approved', 'Declined') 
                           ORDER BY event_datetime DESC");
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Confirmed Reservations Report</title>
+  <title>Reservations Report</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
 
@@ -101,6 +101,78 @@ $result = $mysqli->query("SELECT event_name, firstname, middlename, lastname, ev
       background-color: #28a745;
       font-size: 14px;
     }
+    .badge-declined {
+      background-color: #dc3545;
+      font-size: 14px;
+    }
+    
+    /* ✅ Filter and Sort Controls */
+    .controls-section {
+      margin-bottom: 20px;
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .controls-section label {
+      font-weight: 600;
+      margin-right: 5px;
+    }
+    .controls-section select {
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+    .btn-print {
+      background-color: #2c2f48;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .btn-print:hover {
+      background-color: #404269;
+    }
+
+    /* ✅ Print Styles */
+    @media print {
+      .sidebar, .menu-toggle, .controls-section, .no-print {
+        display: none !important;
+      }
+      .content {
+        margin-left: 0;
+        padding: 0;
+      }
+      .report-container {
+        box-shadow: none;
+        padding: 20px;
+      }
+      body {
+        background-color: white;
+      }
+      .print-header {
+        display: block !important;
+        text-align: center;
+        margin-bottom: 30px;
+      }
+      .print-header h1 {
+        font-size: 28px;
+        margin-bottom: 5px;
+        color: #2c2f48;
+      }
+      .print-header p {
+        font-size: 14px;
+        color: #666;
+      }
+    }
+    
+    .print-header {
+      display: none;
+    }
 
     /* ✅ Responsive Sidebar */
     @media (max-width: 992px) {
@@ -129,6 +201,26 @@ $result = $mysqli->query("SELECT event_name, firstname, middlename, lastname, ev
     .menu-toggle {
       display: none;
     }
+    
+    th {
+      cursor: pointer;
+      user-select: none;
+    }
+    th:hover {
+      background-color: #495057 !important;
+    }
+    th.sortable::after {
+      content: ' ⇅';
+      opacity: 0.5;
+    }
+    th.sort-asc::after {
+      content: ' ▲';
+      opacity: 1;
+    }
+    th.sort-desc::after {
+      content: ' ▼';
+      opacity: 1;
+    }
   </style>
 </head>
 <body>
@@ -154,31 +246,69 @@ $result = $mysqli->query("SELECT event_name, firstname, middlename, lastname, ev
 
 <div class="content">
   <div class="report-container">
-    <h2>Confirmed Reservations Report</h2>
-    <table class="table table-bordered table-striped">
+    <!-- Print Header (Only visible when printing) -->
+    <div class="print-header">
+      <h1>Bridal Event Management System</h1>
+      <p>Reservations Report - Generated on <?= date("F d, Y") ?></p>
+    </div>
+    
+    <h2>Reservations Report</h2>
+    
+    <!-- Filter and Sort Controls -->
+    <div class="controls-section no-print">
+      <div>
+        <label for="statusFilter">Status:</label>
+        <select id="statusFilter" onchange="filterTable()">
+          <option value="all">All</option>
+          <option value="Approved">Confirmed</option>
+          <option value="Declined">Declined</option>
+        </select>
+      </div>
+      
+      <div>
+        <label for="eventTypeFilter">Event Type:</label>
+        <select id="eventTypeFilter" onchange="filterTable()">
+          <option value="all">All Events</option>
+        </select>
+      </div>
+      
+      <button class="btn-print" onclick="window.print()">
+        <i class="fas fa-print"></i> Print Report
+      </button>
+    </div>
+    
+    <table class="table table-bordered table-striped" id="reportTable">
       <thead class="table-dark">
         <tr>
-          <th>Event Name</th>
-          <th>Client</th>
-          <th>Date / Time</th>
-          <th>Status</th>
+          <th class="sortable" onclick="sortTable(0)">Event Type</th>
+          <th class="sortable" onclick="sortTable(1)">Event Name</th>
+          <th class="sortable" onclick="sortTable(2)">Client</th>
+          <th class="sortable" onclick="sortTable(3)">Date / Time</th>
+          <th class="sortable" onclick="sortTable(4)">Status</th>
         </tr>
       </thead>
       <tbody>
         <?php if ($result->num_rows > 0): ?>
           <?php while ($row = $result->fetch_assoc()): ?>
-            <tr>
+            <tr data-status="<?= htmlspecialchars($row['status']) ?>" data-event="<?= htmlspecialchars($row['service_type']) ?>">
+              <td><?= htmlspecialchars($row['service_type']) ?></td>
               <td><?= htmlspecialchars($row['event_name']) ?></td>
               <td>
                 <?= htmlspecialchars($row['firstname'] . ' ' . $row['middlename'] . ' ' . $row['lastname']) ?>
               </td>
-              <td><?= date("M d, Y h:i A", strtotime($row['event_datetime'])) ?></td>
-              <td><span class="badge badge-confirmed">Confirmed</span></td>
+              <td data-timestamp="<?= strtotime($row['event_datetime']) ?>"><?= date("M d, Y h:i A", strtotime($row['event_datetime'])) ?></td>
+              <td>
+                <?php if ($row['status'] === 'Approved'): ?>
+                  <span class="badge badge-confirmed">Confirmed</span>
+                <?php else: ?>
+                  <span class="badge badge-declined">Declined</span>
+                <?php endif; ?>
+              </td>
             </tr>
           <?php endwhile; ?>
         <?php else: ?>
           <tr>
-            <td colspan="4" class="text-center">No confirmed bookings found.</td>
+            <td colspan="5" class="text-center">No bookings found.</td>
           </tr>
         <?php endif; ?>
       </tbody>
@@ -189,6 +319,111 @@ $result = $mysqli->query("SELECT event_name, firstname, middlename, lastname, ev
 <script>
   function toggleSidebar() {
     document.getElementById("sidebar").classList.toggle("active");
+  }
+  
+  // Populate Event Type filter dropdown dynamically
+  document.addEventListener('DOMContentLoaded', function() {
+    const eventTypeFilter = document.getElementById('eventTypeFilter');
+    const table = document.getElementById('reportTable');
+    const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+    const eventTypes = new Set();
+    
+    // Collect unique event types
+    for (let i = 0; i < rows.length; i++) {
+      const eventType = rows[i].getAttribute('data-event');
+      if (eventType) {
+        eventTypes.add(eventType);
+      }
+    }
+    
+    // Add options to dropdown
+    eventTypes.forEach(function(eventType) {
+      const option = document.createElement('option');
+      option.value = eventType;
+      option.textContent = eventType;
+      eventTypeFilter.appendChild(option);
+    });
+  });
+  
+  // Filter table based on selected filters
+  function filterTable() {
+    const statusFilter = document.getElementById('statusFilter').value;
+    const eventTypeFilter = document.getElementById('eventTypeFilter').value;
+    const table = document.getElementById('reportTable');
+    const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+    
+    for (let i = 0; i < rows.length; i++) {
+      const row = rows[i];
+      const status = row.getAttribute('data-status');
+      const eventType = row.getAttribute('data-event');
+      
+      let showRow = true;
+      
+      // Check status filter
+      if (statusFilter !== 'all' && status !== statusFilter) {
+        showRow = false;
+      }
+      
+      // Check event type filter
+      if (eventTypeFilter !== 'all' && eventType !== eventTypeFilter) {
+        showRow = false;
+      }
+      
+      row.style.display = showRow ? '' : 'none';
+    }
+  }
+  
+  // Sort table by column
+  let sortDirection = {};
+  
+  function sortTable(columnIndex) {
+    const table = document.getElementById('reportTable');
+    const tbody = table.getElementsByTagName('tbody')[0];
+    const rows = Array.from(tbody.getElementsByTagName('tr'));
+    
+    // Initialize sort direction for this column
+    if (!sortDirection[columnIndex]) {
+      sortDirection[columnIndex] = 'asc';
+    } else {
+      sortDirection[columnIndex] = sortDirection[columnIndex] === 'asc' ? 'desc' : 'asc';
+    }
+    
+    const direction = sortDirection[columnIndex];
+    
+    // Remove sort classes from all headers
+    const headers = table.getElementsByTagName('thead')[0].getElementsByTagName('th');
+    for (let i = 0; i < headers.length; i++) {
+      headers[i].classList.remove('sort-asc', 'sort-desc');
+    }
+    
+    // Add sort class to current header
+    headers[columnIndex].classList.add(direction === 'asc' ? 'sort-asc' : 'sort-desc');
+    
+    // Sort rows
+    rows.sort(function(a, b) {
+      let aValue, bValue;
+      
+      if (columnIndex === 3) { // Date column (now at index 3)
+        aValue = parseInt(a.getElementsByTagName('td')[columnIndex].getAttribute('data-timestamp'));
+        bValue = parseInt(b.getElementsByTagName('td')[columnIndex].getAttribute('data-timestamp'));
+      } else {
+        aValue = a.getElementsByTagName('td')[columnIndex].textContent.trim().toLowerCase();
+        bValue = b.getElementsByTagName('td')[columnIndex].textContent.trim().toLowerCase();
+      }
+      
+      if (aValue < bValue) {
+        return direction === 'asc' ? -1 : 1;
+      }
+      if (aValue > bValue) {
+        return direction === 'asc' ? 1 : -1;
+      }
+      return 0;
+    });
+    
+    // Reorder table rows
+    rows.forEach(function(row) {
+      tbody.appendChild(row);
+    });
   }
 </script>
 
