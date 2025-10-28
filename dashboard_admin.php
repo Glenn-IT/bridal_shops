@@ -216,13 +216,13 @@ $totalUsers = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
   <div class="sidebar" id="sidebar">
     <img src="images/logo.webp" alt="Logo">
     <h2>Admin Panel</h2>
-    <a href="#" class="active"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+    <a href="dashboard_admin.php" class="active"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
     <a href="manage_user.php"><i class="fas fa-users"></i> Manage Users</a>
     <a href="manage_events.php"><i class="fas fa-calendar-alt"></i> Manage Events</a>
     <a href="reservations.php"><i class="fas fa-book"></i> New Reservations</a>
     <a href="confirmations.php"><i class="fas fa-check-circle"></i> Confirmations</a>
     <a href="reports.php"><i class="fas fa-chart-line"></i> Reports</a>
-    <a href="#" onclick="confirmLogout()">Logout</a>
+    <a href="#" onclick="confirmLogout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
   </div>
 
   <div class="main" id="main">
