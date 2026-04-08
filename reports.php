@@ -275,10 +275,8 @@ $result = $mysqli->query("SELECT service_type, event_name, firstname, middlename
 
       <div>
         <label for="dateSort">Sort by Date:</label>
-        <select id="dateSort" onchange="sortByDate()">
-          <option value="desc">Newest First</option>
-          <option value="asc">Oldest First</option>
-        </select>
+        <input type="date" id="dateSort" onchange="filterByDate()" style="padding:8px 12px; border:1px solid #ddd; border-radius:6px; font-size:14px;">
+        <button type="button" onclick="clearDateFilter()" style="padding:8px 10px; border:1px solid #ddd; border-radius:6px; font-size:13px; background:#fff; cursor:pointer;" title="Clear date filter"><i class="fas fa-times"></i></button>
       </div>
       
       <button class="btn-print" onclick="printReport()">
@@ -363,6 +361,7 @@ $result = $mysqli->query("SELECT service_type, event_name, firstname, middlename
   function filterTable() {
     const statusFilter = document.getElementById('statusFilter').value;
     const eventTypeFilter = document.getElementById('eventTypeFilter').value;
+    const dateInput = document.getElementById('dateSort').value;
     const table = document.getElementById('reportTable');
     const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
     
@@ -370,18 +369,16 @@ $result = $mysqli->query("SELECT service_type, event_name, firstname, middlename
       const row = rows[i];
       const status = row.getAttribute('data-status');
       const eventType = row.getAttribute('data-event');
-      
+      const timestamp = parseInt(row.getElementsByTagName('td')[3].getAttribute('data-timestamp'));
+      const rowDate = new Date(timestamp * 1000);
+      const rowDateStr = rowDate.getFullYear() + '-' +
+        String(rowDate.getMonth() + 1).padStart(2, '0') + '-' +
+        String(rowDate.getDate()).padStart(2, '0');
+
       let showRow = true;
-      
-      // Check status filter
-      if (statusFilter !== 'all' && status !== statusFilter) {
-        showRow = false;
-      }
-      
-      // Check event type filter
-      if (eventTypeFilter !== 'all' && eventType !== eventTypeFilter) {
-        showRow = false;
-      }
+      if (statusFilter !== 'all' && status !== statusFilter) showRow = false;
+      if (eventTypeFilter !== 'all' && eventType !== eventTypeFilter) showRow = false;
+      if (dateInput && rowDateStr !== dateInput) showRow = false;
       
       row.style.display = showRow ? '' : 'none';
     }
@@ -390,47 +387,58 @@ $result = $mysqli->query("SELECT service_type, event_name, firstname, middlename
   // Sort table by column
   let sortDirection = {};
 
-  // Sort by Date dropdown
-  function sortByDate() {
-    const direction = document.getElementById('dateSort').value;
+  // Sort by Date input
+  function filterByDate() {
+    const dateInput = document.getElementById('dateSort').value; // "YYYY-MM-DD"
+    const statusFilter = document.getElementById('statusFilter').value;
+    const eventTypeFilter = document.getElementById('eventTypeFilter').value;
     const table = document.getElementById('reportTable');
-    const tbody = table.getElementsByTagName('tbody')[0];
-    const rows = Array.from(tbody.getElementsByTagName('tr'));
+    const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
 
-    // Update header sort indicators for date column (index 3)
-    const headers = table.getElementsByTagName('thead')[0].getElementsByTagName('th');
-    for (let i = 0; i < headers.length; i++) {
-      headers[i].classList.remove('sort-asc', 'sort-desc');
+    for (let i = 0; i < rows.length; i++) {
+      const row = rows[i];
+      const status = row.getAttribute('data-status');
+      const eventType = row.getAttribute('data-event');
+      const timestamp = parseInt(row.getElementsByTagName('td')[3].getAttribute('data-timestamp'));
+      const rowDate = new Date(timestamp * 1000);
+      const rowDateStr = rowDate.getFullYear() + '-' +
+        String(rowDate.getMonth() + 1).padStart(2, '0') + '-' +
+        String(rowDate.getDate()).padStart(2, '0');
+
+      let show = true;
+      if (statusFilter !== 'all' && status !== statusFilter) show = false;
+      if (eventTypeFilter !== 'all' && eventType !== eventTypeFilter) show = false;
+      if (dateInput && rowDateStr !== dateInput) show = false;
+
+      row.style.display = show ? '' : 'none';
     }
-    headers[3].classList.add(direction === 'asc' ? 'sort-asc' : 'sort-desc');
-    sortDirection[3] = direction;
-
-    rows.sort(function(a, b) {
-      const aVal = parseInt(a.getElementsByTagName('td')[3].getAttribute('data-timestamp'));
-      const bVal = parseInt(b.getElementsByTagName('td')[3].getAttribute('data-timestamp'));
-      return direction === 'asc' ? aVal - bVal : bVal - aVal;
-    });
-
-    rows.forEach(function(row) { tbody.appendChild(row); });
   }
 
-  // Print with current sort label
+  function clearDateFilter() {
+    document.getElementById('dateSort').value = '';
+    filterTable();
+  }
+
+  // Sort by Date dropdown
+  function sortByDate() {
+    filterByDate();
+  }
+
+  // Print with current filter labels
   function printReport() {
-    const dateSort = document.getElementById('dateSort');
-    const sortLabel = dateSort.options[dateSort.selectedIndex].text;
+    const dateInput = document.getElementById('dateSort').value;
+    const dateLabel = dateInput ? dateInput : 'All Dates';
     const statusFilter = document.getElementById('statusFilter');
     const statusLabel = statusFilter.options[statusFilter.selectedIndex].text;
     const eventFilter = document.getElementById('eventTypeFilter');
     const eventLabel = eventFilter.options[eventFilter.selectedIndex].text;
 
     document.getElementById('printSortLabel').textContent =
-      'Filters — Status: ' + statusLabel + ' | Event Type: ' + eventLabel + ' | Sorted by Date: ' + sortLabel;
+      'Filters — Status: ' + statusLabel + ' | Event Type: ' + eventLabel + ' | Date: ' + dateLabel;
 
     window.print();
   }
 
-  function sortTable(columnIndex) {
-  
   function sortTable(columnIndex) {
     const table = document.getElementById('reportTable');
     const tbody = table.getElementsByTagName('tbody')[0];
