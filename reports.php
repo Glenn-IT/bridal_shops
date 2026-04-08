@@ -250,6 +250,7 @@ $result = $mysqli->query("SELECT service_type, event_name, firstname, middlename
     <div class="print-header">
       <h1>Bridal Event Management System</h1>
       <p>Reservations Report - Generated on <?= date("F d, Y") ?></p>
+      <p id="printSortLabel" style="font-size:13px; color:#555;"></p>
     </div>
     
     <h2>Reservations Report</h2>
@@ -271,8 +272,16 @@ $result = $mysqli->query("SELECT service_type, event_name, firstname, middlename
           <option value="all">All Events</option>
         </select>
       </div>
+
+      <div>
+        <label for="dateSort">Sort by Date:</label>
+        <select id="dateSort" onchange="sortByDate()">
+          <option value="desc">Newest First</option>
+          <option value="asc">Oldest First</option>
+        </select>
+      </div>
       
-      <button class="btn-print" onclick="window.print()">
+      <button class="btn-print" onclick="printReport()">
         <i class="fas fa-print"></i> Print Report
       </button>
     </div>
@@ -343,6 +352,11 @@ $result = $mysqli->query("SELECT service_type, event_name, firstname, middlename
       option.textContent = eventType;
       eventTypeFilter.appendChild(option);
     });
+
+    // Set default sort indicator to match SQL ORDER BY event_datetime DESC
+    const headers = table.getElementsByTagName('thead')[0].getElementsByTagName('th');
+    headers[3].classList.add('sort-desc');
+    sortDirection[3] = 'desc';
   });
   
   // Filter table based on selected filters
@@ -375,6 +389,47 @@ $result = $mysqli->query("SELECT service_type, event_name, firstname, middlename
   
   // Sort table by column
   let sortDirection = {};
+
+  // Sort by Date dropdown
+  function sortByDate() {
+    const direction = document.getElementById('dateSort').value;
+    const table = document.getElementById('reportTable');
+    const tbody = table.getElementsByTagName('tbody')[0];
+    const rows = Array.from(tbody.getElementsByTagName('tr'));
+
+    // Update header sort indicators for date column (index 3)
+    const headers = table.getElementsByTagName('thead')[0].getElementsByTagName('th');
+    for (let i = 0; i < headers.length; i++) {
+      headers[i].classList.remove('sort-asc', 'sort-desc');
+    }
+    headers[3].classList.add(direction === 'asc' ? 'sort-asc' : 'sort-desc');
+    sortDirection[3] = direction;
+
+    rows.sort(function(a, b) {
+      const aVal = parseInt(a.getElementsByTagName('td')[3].getAttribute('data-timestamp'));
+      const bVal = parseInt(b.getElementsByTagName('td')[3].getAttribute('data-timestamp'));
+      return direction === 'asc' ? aVal - bVal : bVal - aVal;
+    });
+
+    rows.forEach(function(row) { tbody.appendChild(row); });
+  }
+
+  // Print with current sort label
+  function printReport() {
+    const dateSort = document.getElementById('dateSort');
+    const sortLabel = dateSort.options[dateSort.selectedIndex].text;
+    const statusFilter = document.getElementById('statusFilter');
+    const statusLabel = statusFilter.options[statusFilter.selectedIndex].text;
+    const eventFilter = document.getElementById('eventTypeFilter');
+    const eventLabel = eventFilter.options[eventFilter.selectedIndex].text;
+
+    document.getElementById('printSortLabel').textContent =
+      'Filters — Status: ' + statusLabel + ' | Event Type: ' + eventLabel + ' | Sorted by Date: ' + sortLabel;
+
+    window.print();
+  }
+
+  function sortTable(columnIndex) {
   
   function sortTable(columnIndex) {
     const table = document.getElementById('reportTable');
