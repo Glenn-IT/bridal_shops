@@ -10,13 +10,19 @@ if ($mysqli->connect_error) {
     die("Connection failed: " . $mysqli->connect_error);
 }
 
-// ✅ Combine firstname, middlename, lastname into client_name
 $result = $mysqli->query("
     SELECT id, event_name, status, 
-           CONCAT(firstname, ' ', middlename, ' ', lastname) AS client_name
+           CONCAT(firstname, ' ', COALESCE(NULLIF(middlename,''),' '), ' ', lastname) AS client_name
     FROM bookings
     ORDER BY id DESC
 ");
+
+// Fetch all booking details for modal
+$allBookings = [];
+$result2 = $mysqli->query("SELECT * FROM bookings ORDER BY id DESC");
+while ($b = $result2->fetch_assoc()) {
+    $allBookings[] = $b;
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -106,7 +112,7 @@ $result = $mysqli->query("
               </span>
             </td>
             <td>
-              <a href="view_bookings.php?id=<?= $row['id'] ?>" class="btn btn-sm btn-info">View</a>
+              <button class="btn btn-sm btn-info text-white" onclick="viewBooking(<?= $row['id'] ?>)"><i class="fas fa-eye"></i> View</button>
               <a href="edit_booking.php?id=<?= $row['id'] ?>" class="btn btn-sm btn-primary">Edit</a>
               <form method="POST" action="delete_booking.php" class="d-inline" onsubmit="return confirm('Delete this booking?');">
                 <input type="hidden" name="id" value="<?= $row['id'] ?>">
@@ -119,6 +125,74 @@ $result = $mysqli->query("
     </table>
   </div>
 
+<!-- Booking Details Modal -->
+<div class="modal fade" id="bookingModal" tabindex="-1" aria-labelledby="bookingModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header" style="background-color:#2c2f48; color:#fff;">
+        <h5 class="modal-title"><i class="fas fa-calendar-check me-2"></i> Booking Details</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body px-4 py-3">
+        <div class="detail-row"><span class="detail-label">Full Name</span><span class="detail-value" id="m-name"></span></div>
+        <div class="detail-row"><span class="detail-label">Email</span><span class="detail-value" id="m-email"></span></div>
+        <div class="detail-row"><span class="detail-label">Phone Number</span><span class="detail-value" id="m-phone"></span></div>
+        <div class="detail-row"><span class="detail-label">Service Type</span><span class="detail-value" id="m-service"></span></div>
+        <div class="detail-row"><span class="detail-label">Event Name</span><span class="detail-value" id="m-event"></span></div>
+        <div class="detail-row"><span class="detail-label">Event Date & Time</span><span class="detail-value" id="m-datetime"></span></div>
+        <div class="detail-row"><span class="detail-label">Location</span><span class="detail-value" id="m-location"></span></div>
+        <div class="detail-row"><span class="detail-label">Status</span><span class="detail-value" id="m-status"></span></div>
+        <div class="detail-row"><span class="detail-label">Booked On</span><span class="detail-value" id="m-created"></span></div>
+      </div>
+      <div class="modal-footer">
+        <a id="m-edit-btn" href="#" class="btn btn-primary"><i class="fas fa-edit"></i> Edit</a>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .detail-row { display:flex; gap:10px; padding:8px 0; border-bottom:1px solid #f0f0f0; }
+  .detail-row:last-child { border-bottom:none; }
+  .detail-label { font-weight:600; color:#2c2f48; min-width:145px; }
+  .detail-value { color:#444; }
+</style>
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    const bookings = <?= json_encode($allBookings) ?>;
+
+    function viewBooking(id) {
+      const b = bookings.find(x => x.id == id);
+      if (!b) return;
+
+      const fullname = [b.firstname, b.middlename, b.lastname].filter(Boolean).join(' ');
+      const statusColors = { Approved:'success', Declined:'danger', Rejected:'danger', Pending:'warning' };
+      const color = statusColors[b.status] || 'secondary';
+
+      document.getElementById('m-name').textContent     = fullname;
+      document.getElementById('m-email').textContent    = b.email || '—';
+      document.getElementById('m-phone').textContent    = b.phone_number || '—';
+      document.getElementById('m-service').textContent  = b.service_type;
+      document.getElementById('m-event').textContent    = b.event_name;
+      document.getElementById('m-datetime').textContent = formatDate(b.event_datetime);
+      document.getElementById('m-location').textContent = b.location || '—';
+      document.getElementById('m-created').textContent  = formatDate(b.created_at);
+      document.getElementById('m-status').innerHTML     = `<span class="badge bg-${color}">${b.status}</span>`;
+      document.getElementById('m-edit-btn').href        = `edit_booking.php?id=${b.id}`;
+
+      new bootstrap.Modal(document.getElementById('bookingModal')).show();
+    }
+
+    function formatDate(dateStr) {
+      if (!dateStr) return '—';
+      const d = new Date(dateStr.replace(' ', 'T'));
+      return d.toLocaleString('en-US', {
+        year:'numeric', month:'long', day:'numeric',
+        hour:'numeric', minute:'2-digit', hour12:true
+      });
+    }
+  </script>
 </body>
 </html>

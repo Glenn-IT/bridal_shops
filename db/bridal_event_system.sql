@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 28, 2025 at 07:04 PM
+-- Generation Time: Apr 08, 2026 at 07:25 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -45,15 +45,6 @@ CREATE TABLE `bookings` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `bookings`
---
-
-INSERT INTO `bookings` (`id`, `firstname`, `middlename`, `lastname`, `email`, `phone_number`, `service_type`, `package_name`, `event_name`, `event_datetime`, `location`, `payment_method`, `payment_screenshot`, `status`, `created_at`) VALUES
-(6, 'Glenard', 'U', 'Pagurayan', 'glenard2308@gmail.com', '09557997409', 'Wedding', 'Basic Package', 'Sample', '2025-10-31 00:27:00', 'Sample', 'Cash', NULL, 'Declined', '2025-10-28 16:27:42'),
-(7, 'Lhei', 'B', 'Pagurayan', 'lbariuangasmen@gmail.com', '09797978978', 'Anniversary', 'Silver Package', 'qwe', '2025-10-30 00:28:00', 'qewe12eq', 'GCash', 'uploads/payment_references/payment_1761668916_6900ef34db627.png', 'Approved', '2025-10-28 16:28:36'),
-(8, 'Glenard', 'U', 'Pagurayan', 'glenard2308@gmail.com', '09557997409', 'Wedding', 'Basic Package', 'Samkwe', '2025-11-02 10:58:00', 'qweqweqw', 'GCash', 'uploads/payment_references/payment_1761674389_69010495df29e.jpg', 'Approved', '2025-10-28 17:59:49');
-
 -- --------------------------------------------------------
 
 --
@@ -69,14 +60,6 @@ CREATE TABLE `chat_conversations` (
   `status` enum('active','closed') DEFAULT 'active'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Dumping data for table `chat_conversations`
---
-
-INSERT INTO `chat_conversations` (`id`, `user_id`, `admin_id`, `created_at`, `last_message_at`, `status`) VALUES
-(2, 8, NULL, '2025-10-28 16:06:09', '2025-10-28 16:08:31', 'active'),
-(3, 7, NULL, '2025-10-28 16:14:37', '2025-10-28 18:00:59', 'active');
-
 -- --------------------------------------------------------
 
 --
@@ -91,23 +74,6 @@ CREATE TABLE `chat_messages` (
   `is_read` tinyint(1) DEFAULT 0,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `chat_messages`
---
-
-INSERT INTO `chat_messages` (`id`, `conversation_id`, `sender_id`, `message`, `is_read`, `created_at`) VALUES
-(3, 2, 8, 'qwe', 1, '2025-10-28 16:06:12'),
-(4, 2, 1, 'qwe', 1, '2025-10-28 16:06:24'),
-(5, 2, 1, 'qwe', 1, '2025-10-28 16:08:29'),
-(6, 2, 1, 'rrrr', 1, '2025-10-28 16:08:31'),
-(7, 3, 7, 'qwedas', 1, '2025-10-28 16:15:24'),
-(8, 3, 7, 'qwrqew', 1, '2025-10-28 16:16:29'),
-(9, 3, 1, 'qweasd', 1, '2025-10-28 16:22:22'),
-(10, 3, 7, 'adqwe', 1, '2025-10-28 16:22:31'),
-(11, 3, 1, 'qweasd', 1, '2025-10-28 16:22:35'),
-(12, 3, 7, 'qwewqeasdawd', 1, '2025-10-28 18:00:33'),
-(13, 3, 1, 'heloo', 1, '2025-10-28 18:00:59');
 
 -- --------------------------------------------------------
 
@@ -178,36 +144,6 @@ CREATE TABLE `notifications` (
   `is_read` tinyint(1) DEFAULT 0,
   `created_at` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `notifications`
---
-
-INSERT INTO `notifications` (`id`, `username`, `message`, `is_read`, `created_at`) VALUES
-(15, 'laika queroda', 'Your booking reservation is approved.', 0, '2025-09-18 20:44:20'),
-(16, 'Angelie Pagutalan', 'Your booking reservation is approved.', 0, '2025-09-24 10:18:38'),
-(17, 'Melody Dela cruz', 'Your booking reservation is approved.', 0, '2025-09-24 10:21:06'),
-(18, 'Melody Dela cruz', 'Your booking reservation is approved.', 0, '2025-09-24 15:28:02'),
-(19, 'Melody Dela cruz', 'Your booking reservation is approved.', 0, '2025-09-24 18:53:57'),
-(20, '', 'Your booking reservation is approved.', 0, '2025-09-27 16:37:58'),
-(21, '', 'Hello , your booking reservation has been approved.', 0, '2025-09-27 20:26:29'),
-(22, 'Nicole Daguio Acojedo', 'Hello Nicole Daguio Acojedo, your booking reservation has been approved.', 0, '2025-09-27 21:00:41'),
-(23, 'Angelie Padua Pagutalan', 'Hello Angelie Padua Pagutalan, your booking reservation has been approved.', 0, '2025-09-27 21:17:44'),
-(24, 'Angelie Padua Pagutalan', 'Hello Angelie Padua Pagutalan, your booking reservation has been approved.', 0, '2025-09-27 21:34:52'),
-(25, 'Nicole Daguio Acojedo', 'Hello Nicole Daguio Acojedo, your booking reservation has been approved.', 0, '2025-09-29 11:41:27'),
-(26, 'Nicole Daguio Acojedo', 'Hello Nicole Daguio Acojedo, your booking reservation has been approved.', 0, '2025-09-29 11:41:34'),
-(27, 'Nicole Daguio Acojedo', 'Hello Nicole Daguio Acojedo, your booking reservation has been approved.', 0, '2025-09-29 11:41:40'),
-(28, 'Nicole Daguio Acojedo', 'Hello Nicole Daguio Acojedo, your booking reservation has been approved.', 0, '2025-09-29 11:41:46'),
-(29, 'Roderic Pacion Casauay', 'Hello Roderic Pacion Casauay, your booking reservation has been approved.', 0, '2025-09-30 09:54:21'),
-(30, 'Angelie Lagoc Pagutalan', 'Hello Angelie Lagoc Pagutalan, your booking reservation has been approved.', 0, '2025-09-30 10:02:23'),
-(31, 'Angelie Lagoc Pagutalan', 'Hello Angelie Lagoc Pagutalan, your booking reservation has been approved.', 0, '2025-09-30 10:02:30'),
-(32, 'Angelie Lagoc Pagutalan', 'Hello Angelie Lagoc Pagutalan, your booking reservation has been approved.', 0, '2025-09-30 10:02:35'),
-(33, 'Angelie Lagoc Pagutalan', 'Hello Angelie Lagoc Pagutalan, your booking reservation has been approved.', 0, '2025-09-30 10:02:41'),
-(34, 'Angelie Lagoc Pagutalan', 'Hello Angelie Lagoc Pagutalan, your booking reservation has been approved.', 0, '2025-09-30 10:02:48'),
-(35, 'Brian A Ilac', 'Hello Brian A Ilac, your booking reservation has been approved.', 0, '2025-09-30 10:03:07'),
-(36, 'Lhei B Pagurayan', 'Hello Lhei B Pagurayan, your booking reservation has been approved.', 0, '2025-10-29 00:29:12'),
-(37, 'Glenard U Pagurayan', 'Hello Glenard U Pagurayan, your booking reservation has been declined.', 0, '2025-10-29 00:29:22'),
-(38, 'Glenard U Pagurayan', 'Hello Glenard U Pagurayan, your booking reservation has been approved.', 0, '2025-10-29 02:01:55');
 
 -- --------------------------------------------------------
 
@@ -286,11 +222,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `firstname`, `middlename`, `lastname`, `phone_number`, `username`, `password`, `role`, `email`, `security_question`, `security_answer_hash`, `status`) VALUES
-(1, '', '', '', NULL, 'admin', '$2y$10$gvCmf1zwWBABdIk/L4hdNOHdOvCBwuTcFogGsJcQ60qyL5MEqxWIy', 'admin', 'admin@gmail.com', 'What is your favorite color?', 'a67a41c8bc79d5da917b5051f1f0d3f5aeb4b63ba246b3546a961ef7a3c7d931', 'active'),
-(2, 'angelie', 'quin', 'pangadua', NULL, 'Angeeeee', '$2y$10$CSyB6F39LPeV2MU/rNBBMO72qpVMAUHShbEtQsjsHcI9ch9X/o1tm', 'client', 'angelie@gmail.com.com', 'What is your mother’s maiden name?', '155aaee0403c7f9ed1383f4bb9ec75b25d4f158af21acef43a029ee658ffd99b', 'active'),
-(6, 'admin', '', '', NULL, 'admin1', '$2y$10$w6QwQwQwQwQwQwQwQwQwQeQwQwQwQwQwQwQwQwQwQwQwQwQwQwQwQwQwQwQwQwQw', 'admin', 'admin@gmail.com', 'What is you favorite color?', '9b1a4e9a1f2b3c3e7b8e7e8e7e8e7e8e7e8e7e8e7e8e7e8e7e8e7e8e7e8e7e8e', 'active'),
-(7, 'Glenard', 'U', 'Pagurayan', '09557997409', 'Glenn', '$2y$10$1At2/EEHCMrt00i8N3K9MOmNf9Zu2Ae3nBeHp2fApHYKP6gqJ6aAq', 'client', 'glenard2308@gmail.com', 'What is your favorite color?', '16477688c0e00699c6cfa4497a3612d7e83c532062b64b250fed8908128ed548', 'active'),
-(8, 'Lhei', 'B', 'Pagurayan', '09797978978', 'Lhei', '$2y$10$Abl1nsfUTWzBrsAKBYU43.5sbsRt89K8l0Wm.n7xQg7HxnrH.0M6K', 'client', 'lbariuangasmen@gmail.com', 'What is your favorite color?', '16477688c0e00699c6cfa4497a3612d7e83c532062b64b250fed8908128ed548', 'active');
+(1, '', '', '', NULL, 'admin', '$2y$10$gvCmf1zwWBABdIk/L4hdNOHdOvCBwuTcFogGsJcQ60qyL5MEqxWIy', 'admin', 'admin@gmail.com', 'What is your favorite color?', 'a67a41c8bc79d5da917b5051f1f0d3f5aeb4b63ba246b3546a961ef7a3c7d931', 'active');
 
 --
 -- Indexes for dumped tables
@@ -376,7 +308,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `bookings`
 --
 ALTER TABLE `bookings`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `chat_conversations`
