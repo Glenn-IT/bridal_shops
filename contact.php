@@ -438,7 +438,7 @@ if ($isLoggedIn) {
             <h2><i class="fas fa-map-marker-alt"></i> Visit Us</h2>
             <p><i class="fas fa-map-pin"></i> <strong>Location:</strong> Sampaguita, Solana, Cagayan</p>
             <p><i class="fas fa-phone-alt"></i> <strong>Phone:</strong> 0912-345-6789</p>
-            <p><i class="fas fa-envelope"></i> <strong>Email:</strong> maebridalevents@example.com</p>
+            <p><i class="fas fa-envelope"></i> <strong>Email:</strong> maesbridal@gmail.com</p>
         </div>
 
         <!-- Google Map Embed -->
