@@ -6,7 +6,7 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'admin') {
     exit();
 }
 
-$conn = new mysqli("localhost", "root", "", "bridal_event_system");
+include_once 'config.php'; // Uses $conn from config
 
 $username = $_SESSION['username'];
 
