@@ -1,0 +1,22 @@
+# Never commit live database credentials
+config.php
+
+# Composer dependencies (can be reinstalled with composer install)
+/vendor/
+
+# User uploaded files
+/uploads/payment_references/*
+!/uploads/payment_references/.gitkeep
+
+# Dev/debug files (should already be deleted)
+view_credentials.php
+debug_user.php
+quick_fix_user.php
+test_chat.php
+test_chat_tables.php
+test_registration.php
+clear_test_chats.php
+
+# OS files
+.DS_Store
+Thumbs.db
