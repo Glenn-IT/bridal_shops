@@ -7,11 +7,7 @@ session_start();
 header('Content-Type: application/json');
 
 // Database connection
-$mysqli = new mysqli("localhost", "root", "", "bridal_event_system");
-if ($mysqli->connect_errno) {
-    echo json_encode(['available' => false, 'error' => 'Database connection failed']);
-    exit();
-}
+include_once 'config.php'; // Uses $mysqli from config
 
 // Get the date from the request
 $event_datetime = isset($_GET['event_datetime']) ? $_GET['event_datetime'] : '';
