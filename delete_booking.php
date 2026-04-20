@@ -9,11 +9,7 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'admin') {
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id'])) {
     $bookingId = intval($_POST['id']);
 
-    $mysqli = new mysqli("localhost", "root", "", "bridal_event_system");
-
-    if ($mysqli->connect_errno) {
-        die("Database connection failed: " . $mysqli->connect_error);
-    }
+    include_once 'config.php'; // Uses $mysqli from config
 
     $stmt = $mysqli->prepare("DELETE FROM bookings WHERE id = ?");
     if ($stmt) {
