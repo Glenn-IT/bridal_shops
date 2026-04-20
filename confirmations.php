@@ -9,10 +9,7 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 require 'vendor/autoload.php';
 
-$mysqli = new mysqli("localhost", "root", "", "bridal_event_system");
-if ($mysqli->connect_errno) {
-    die("Connection failed: " . $mysqli->connect_error);
-}
+include_once 'config.php'; // Uses $mysqli from config
 
 // Email function
 function sendEmail($to, $subject, $body) {
