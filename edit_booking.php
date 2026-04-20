@@ -8,10 +8,7 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'client') {
 }
 
 // DB connection
-$conn = new mysqli("localhost", "root", "", "bridal_event_system");
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
+include_once 'config.php'; // Uses $conn from config
 
 $username = $_SESSION['username'];
 $booking = null;
