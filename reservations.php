@@ -5,10 +5,7 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'admin') {
     exit();
 }
 
-$mysqli = new mysqli("localhost", "root", "", "bridal_event_system");
-if ($mysqli->connect_errno) {
-    die("Connection failed: " . $mysqli->connect_error);
-}
+include_once 'config.php'; // Uses $mysqli from config
 
 if (isset($_GET['action']) && isset($_GET['id'])) {
     $id = intval($_GET['id']);
