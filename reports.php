@@ -8,10 +8,7 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'admin') {
 }
 
 // ✅ Database connection
-$mysqli = new mysqli("localhost", "root", "", "bridal_event_system");
-if ($mysqli->connect_errno) {
-    die("Failed to connect to MySQL: " . $mysqli->connect_error);
-}
+include_once 'config.php'; // Uses $mysqli from config
 
 // ✅ Fetch both 'Approved' and 'Declined' bookings
 $result = $mysqli->query("SELECT service_type, event_name, firstname, middlename, lastname, event_datetime, status 
