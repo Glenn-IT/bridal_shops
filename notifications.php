@@ -15,24 +15,30 @@ $stmt->execute([$username]);
 $user = $stmt->fetch(PDO::FETCH_ASSOC);
 $fullname = $user ? trim($user['firstname'] . ' ' . $user['middlename'] . ' ' . $user['lastname']) : $username;
 
-$mysqli = new mysqli("localhost", "root", "", "bridal_event_system");
-if ($mysqli->connect_errno) {
-    die("Connection failed: " . $mysqli->connect_error);
-}
+// $mysqli is already available from config.php
 
 // ✅ Delete individual notification (only for this user)
 if (isset($_GET['delete_id'])) {
     $delete_id = intval($_GET['delete_id']);
-    $mysqli->query("DELETE FROM notifications WHERE id=$delete_id AND username='$username'");
+    $stmt_del = $mysqli->prepare("DELETE FROM notifications WHERE id = ? AND username = ?");
+    $stmt_del->bind_param("is", $delete_id, $username);
+    $stmt_del->execute();
+    $stmt_del->close();
     header("Location: notifications.php");
     exit();
 }
 
 // ✅ Mark all as read for this user
-$mysqli->query("UPDATE notifications SET is_read=1 WHERE username='$username'");
+$stmt_read = $mysqli->prepare("UPDATE notifications SET is_read=1 WHERE username = ?");
+$stmt_read->bind_param("s", $username);
+$stmt_read->execute();
+$stmt_read->close();
 
 // ✅ Fetch all notifications for this user
-$result = $mysqli->query("SELECT * FROM notifications WHERE username='$username' ORDER BY created_at DESC");
+$stmt_fetch = $mysqli->prepare("SELECT * FROM notifications WHERE username = ? ORDER BY created_at DESC");
+$stmt_fetch->bind_param("s", $username);
+$stmt_fetch->execute();
+$result = $stmt_fetch->get_result();
 ?>
 <!DOCTYPE html>
 <html lang="en">
