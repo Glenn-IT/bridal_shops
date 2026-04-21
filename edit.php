@@ -14,10 +14,7 @@ if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
 $id = intval($_GET['id']);
 $username = $_SESSION['username'];
 
-$mysqli = new mysqli("localhost", "root", "", "bridal_event_system");
-if ($mysqli->connect_error) {
-    die("Connection failed: " . $mysqli->connect_error);
-}
+include_once 'config.php'; // Uses $mysqli from config
 
 $stmt = $mysqli->prepare("SELECT * FROM bookings WHERE id = ? AND username = ?");
 $stmt->bind_param("is", $id, $username);
