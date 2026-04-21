@@ -1,10 +1,6 @@
 <?php
 session_start();
-
-$mysqli = new mysqli("localhost", "root", "", "bridal_event_system");
-if ($mysqli->connect_errno) {
-    die("Connection failed: " . $mysqli->connect_error);
-}
+include_once 'config.php'; // Uses $mysqli from config
 
 
 $booking = $mysqli->query("SELECT * FROM bookings WHERE status='Approved' ORDER BY event_datetime DESC LIMIT 1");
