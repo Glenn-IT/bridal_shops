@@ -4,14 +4,13 @@ include 'config.php'; // Ensure $pdo is defined
 
 if (isset($_SESSION["username"]) && isset($_SESSION["role"])) {
     $role = $_SESSION["role"];
-   
+    if ($role === 'admin') {
         header("Location: dashboard_admin.php");
-        exit;
+    } else {
+        header("Location: dashboard_client.php");
     }
-
-
-    
-    // Other roles can remain on this page or be redirected as needed
+    exit;
+}
 
 
 $error = "";
@@ -81,9 +80,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $remainingTime == 0) {
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Mae’s Bridal Shop - Login</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mae's Bridal Shop - Login</title>
     <link rel="stylesheet" href="assets/style.css">
     <style>
         body {
@@ -179,7 +180,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $remainingTime == 0) {
 <body>
 
 <div class="login-box">
-    <h2>Mae’s Bridal Shop</h2>
+    <h2>Mae's Bridal Shop</h2>
     <form method="post">
         <input type="text" name="username" placeholder="Username" required autofocus>
         <input type="password" name="password" id="password" placeholder="Password" required>
