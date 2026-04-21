@@ -6,10 +6,7 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'admin') {
     exit();
 }
 
-$mysqli = new mysqli("localhost", "root", "", "bridal_event_system");
-if ($mysqli->connect_error) {
-    die("Connection failed: " . $mysqli->connect_error);
-}
+include_once 'config.php'; // Uses $mysqli from config
 
 // Fetch all bookings
 $bookings = $mysqli->query("SELECT id, firstname, middlename, lastname, event_name, event_datetime, service_type, status FROM bookings ORDER BY created_at DESC");
